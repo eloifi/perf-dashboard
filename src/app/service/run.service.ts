@@ -34,4 +34,8 @@ export class RunService {
   getRun(id: string, app: string): Observable<Run> {
     return this.http.get<Run>(`/api/runs/${id}?app=${app}`);
   }
+  //
+  getRunComparison(id: string, app: string): Observable<any> {
+    return this.http.get<any>(`/api/runs/${id}/compare?app=${app}`);
+  }
 }

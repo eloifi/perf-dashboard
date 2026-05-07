@@ -1,0 +1,35 @@
+<h3>Comparaison avec le run précédent</h3>
+
+<div *ngIf="comparison?.metrics">
+    <table>
+        <tr>
+            <th>Métrique</th>
+            <th>Δ</th>
+        </tr>
+
+        <tr>
+            <td>p95</td>
+            <td [style.color]="comparison.metrics.p95 > 0 ? 'red' : 'green'">
+                {{ comparison.metrics.p95 }} ms
+            </td>
+        </tr>
+
+        <tr>
+            <td>p99</td>
+            <td [style.color]="comparison.metrics.p99 > 0 ? 'red' : 'green'">
+                {{ comparison.metrics.p99 }} ms
+            </td>
+        </tr>
+
+        <tr>
+            <td>Erreurs</td>
+            <td [style.color]="comparison.metrics.errors > 0 ? 'red' : 'green'">
+                {{ comparison.metrics.errors }}
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div *ngIf="comparison?.message">
+    <p>{{ comparison.message }}</p>
+</div>

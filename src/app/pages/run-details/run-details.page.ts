@@ -8,21 +8,11 @@ import { AppStore } from 'src/app/service/app.store';
   standalone: true,
   selector: 'app-run-details',
   imports: [CommonModule],
-  template: `
-    <h2>Détails du run</h2>
-
-    <ng-container *ngIf="run">
-      <p><strong>ID:</strong> {{ run.id }}</p>
-      <p><strong>Application:</strong> {{ run.application }}</p>
-      <p><strong>Date:</strong> {{ run.date }}</p>
-      <p><strong>p95:</strong> {{ run.p95 }} ms</p>
-      <p><strong>p99:</strong> {{ run.p99 }} ms</p>
-      <p><strong>Erreurs:</strong> {{ run.http_req_failed }}</p>
-    </ng-container>
-  `,
+  templateUrl: './run-details.page.html',
 })
 export class RunDetailsPage {
   run?: Run;
+  comparison: any;
 
   constructor(
     private route: ActivatedRoute,
@@ -37,6 +27,10 @@ export class RunDetailsPage {
 
       this.runService.getRun(id, app).subscribe((run) => {
         this.run = run;
+      });
+
+      this.runService.getRunComparison(id, app).subscribe((cmp) => {
+        this.comparison = cmp;
       });
     });
   }
