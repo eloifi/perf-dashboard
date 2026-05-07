@@ -1,0 +1,25 @@
+.app-shell {
+    height: 100vh;
+}
+
+.dark-mode {
+    background: #121212;
+    color: #eee;
+}
+
+mat-sidenav {
+    background: #1e1e1e;
+    color: #eee;
+}
+
+mat-toolbar {
+    background: #212121 !important;
+}
+
+.content {
+    padding: 16px;
+}
+
+.spacer {
+    flex: 1 1 auto;
+}
