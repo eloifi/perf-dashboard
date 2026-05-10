@@ -15,6 +15,12 @@ export class PerfRunService {
     });
   }
 
+  getLatestComparison(app: string, scenario: string) {
+    return this.http.get<any>(`${this.base}/compare/latest`, {
+      params: { app, scenario },
+    });
+  }
+
   getHistory(
     app: string,
     scenario: string,

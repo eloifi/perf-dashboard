@@ -3,8 +3,8 @@ import { LayoutComponent } from './layout/layout.component';
 import { ApplicationsPage } from './pages/applications/applications.page';
 import { RunDetailsPage } from './pages/run-details/run-details.page';
 import { RunsPage } from './pages/runs/runs.page';
-import { GraphsPage } from './pages/graphs/graphs.page';
 import { applicationsResolver } from './service/applications.resolver';
+import { GraphsPageComponent } from './pages/graphs/graphs.page';
 
 export const routes: Routes = [
   {
@@ -23,7 +23,7 @@ export const routes: Routes = [
       },
       {
         path: 'graphs',
-        component: GraphsPage,
+        component: GraphsPageComponent,
         resolve: { apps: applicationsResolver },
       },
       {

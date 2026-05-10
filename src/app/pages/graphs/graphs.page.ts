@@ -1,14 +1,10 @@
-import {
-  Component,
-  AfterViewInit,
-  ElementRef,
-  ViewChild,
-  effect,
-} from '@angular/core';
+import { Component, ElementRef, ViewChild, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Chart } from 'chart.js';
-import { PerfRunService } from 'src/app/service/perfs-run.service';
+import { Chart, registerables } from 'chart.js';
 import { AppStore } from 'src/app/service/app.store';
+import { PerfRunService } from 'src/app/service/perfs-run.service';
+
+Chart.register(...registerables);
 
 @Component({
   standalone: true,
@@ -19,19 +15,17 @@ import { AppStore } from 'src/app/service/app.store';
     <canvas #chartCanvas></canvas>
   `,
 })
-export class GraphsPage implements AfterViewInit {
+export class GraphsPageComponent {
   @ViewChild('chartCanvas') canvasRef!: ElementRef<HTMLCanvasElement>;
   chart?: Chart;
 
   constructor(
     private api: PerfRunService,
     private appStore: AppStore,
-  ) {}
-
-  ngAfterViewInit() {
+  ) {
     effect(() => {
       const app = this.appStore.app();
-      if (!app) return;
+      if (!app || !this.canvasRef) return;
 
       this.api.getHistory(app, 'smoke').subscribe((runs) => {
         if (!runs.length) return;
