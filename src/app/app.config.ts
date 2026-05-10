@@ -8,6 +8,7 @@ export const appConfig = {
   providers: [
     provideRouter(routes),
     provideHttpClient(withInterceptors([authInterceptor])),
-    provideAnimations(), // ← OBLIGATOIRE pour Angular Material
-  ],
+    provideAnimations(),
+    provideAnimations()
+],
 };

@@ -1,7 +1,8 @@
 import { Component, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { RunService, Run } from '../../service/run.service';
+import { PerfRun } from '../../model/perf-run';
+import { PerfRunService } from 'src/app/service/perfs-run.service';
 import { AppStore } from 'src/app/service/app.store';
 
 @Component({
@@ -14,30 +15,25 @@ import { AppStore } from 'src/app/service/app.store';
     <ul>
       <li *ngFor="let r of runs">
         <a [routerLink]="['/runs', r.id]">
-          {{ r.application }} — {{ r.date }} — p95: {{ r.p95 }}ms
+          {{ r.app }} — {{ r.scenario }} — {{ r.date }} — p95: {{ r.p95 }}ms
         </a>
       </li>
     </ul>
   `,
 })
 export class RunsPage {
-  runs: Run[] = [];
+  runs: PerfRun[] = [];
 
   constructor(
-    private runService: RunService,
+    private api: PerfRunService,
     private appStore: AppStore,
   ) {
     effect(() => {
       const app = this.appStore.app();
       if (!app) return;
 
-      this.runService.getRunIds(app).subscribe((ids) => {
-        this.runs = [];
-        ids.forEach((id) => {
-          this.runService.getRun(id, app).subscribe((run) => {
-            this.runs.push(run);
-          });
-        });
+      this.api.getHistory(app, 'smoke').subscribe((r) => {
+        this.runs = r;
       });
     });
   }

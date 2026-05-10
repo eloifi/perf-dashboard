@@ -1,0 +1,93 @@
+<!-- src/app/perfs-dashboard/perfs-dashboard.component.html -->
+<div class="dashboard">
+
+    <header class="header">
+        <div>
+            <h1>Performance Dashboard</h1>
+            <p class="subtitle">Suivi des perfs par application / scénario</p>
+        </div>
+
+        <mat-card class="status-card" *ngIf="latest">
+            <div class="status-header">
+                <span class="badge" [ngClass]="getStatusClass()">
+                    {{ latest.status }}
+                </span>
+                <span class="score">Score: {{ latest.globalScore }} / 100</span>
+            </div>
+            <div class="status-body">
+                <span>p95: <strong>{{ latest.p95 }}</strong> ms</span>
+                <span>Erreurs: <strong>{{ latest.httpReqFailed * 100 | number:'1.0-2' }}%</strong></span>
+                <span>Dernier run: {{ latest.date | date:'short' }}</span>
+            </div>
+        </mat-card>
+    </header>
+
+    <section class="controls">
+        <mat-card class="filters-card">
+            <div class="filters-row">
+                <mat-form-field appearance="outline">
+                    <mat-label>Application</mat-label>
+                    <mat-select [(ngModel)]="selectedApp" (selectionChange)="reload()">
+                        <mat-option *ngFor="let app of apps" [value]="app">{{ app }}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                    <mat-label>Scénario</mat-label>
+                    <mat-select [(ngModel)]="selectedScenario" (selectionChange)="reload()">
+                        <mat-option *ngFor="let s of scenarios" [value]="s">{{ s }}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                    <mat-label>Du</mat-label>
+                    <input matInput [matDatepicker]="pickerFrom" [(ngModel)]="from" (dateChange)="reload()">
+                    <mat-datepicker-toggle matSuffix [for]="pickerFrom"></mat-datepicker-toggle>
+                    <mat-datepicker #pickerFrom></mat-datepicker>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                    <mat-label>Au</mat-label>
+                    <input matInput [matDatepicker]="pickerTo" [(ngModel)]="to" (dateChange)="reload()">
+                    <mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
+                    <mat-datepicker #pickerTo></mat-datepicker>
+                </mat-form-field>
+            </div>
+        </mat-card>
+    </section>
+
+    <section class="mini-cards" *ngIf="latest">
+        <mat-card class="mini-card">
+            <label>p95</label>
+            <span class="value">{{ latest.p95 }} ms</span>
+            <span class="trend" [ngClass]="trendP95">
+                {{ trendP95 === 'up' ? '↑' : trendP95 === 'down' ? '↓' : '→' }}
+            </span>
+        </mat-card>
+
+        <mat-card class="mini-card">
+            <label>Score</label>
+            <span class="value">{{ latest.globalScore }}</span>
+            <span class="trend" [ngClass]="trendScore">
+                {{ trendScore === 'up' ? '↑' : trendScore === 'down' ? '↓' : '→' }}
+            </span>
+        </mat-card>
+
+        <mat-card class="mini-card">
+            <label>Erreurs</label>
+            <span class="value">{{ latest.httpReqFailed * 100 | number:'1.0-2' }}%</span>
+            <span class="trend" [ngClass]="trendErrors">
+                {{ trendErrors === 'up' ? '↑' : trendErrors === 'down' ? '↓' : '→' }}
+            </span>
+        </mat-card>
+    </section>
+
+    <section class="chart-section">
+        <mat-card>
+            <h2>Évolution des perfs</h2>
+            <canvas baseChart [data]="chartData" [options]="chartOptions" type="line">
+            </canvas>
+        </mat-card>
+    </section>
+
+</div>

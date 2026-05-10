@@ -1,0 +1,133 @@
+/* src/app/perfs-dashboard/perfs-dashboard.component.scss */
+.dashboard {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    gap: 16px;
+
+    .subtitle {
+        margin: 4px 0 0;
+        color: #6b7280;
+        font-size: 14px;
+    }
+}
+
+.status-card {
+    min-width: 260px;
+
+    .status-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+
+    .status-body {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        font-size: 13px;
+    }
+
+    .badge {
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+
+        &.ok {
+            background: #22c55e33;
+            color: #16a34a;
+        }
+
+        &.warn {
+            background: #f9731633;
+            color: #ea580c;
+        }
+
+        &.critical {
+            background: #ef444433;
+            color: #dc2626;
+        }
+    }
+
+    .score {
+        font-weight: 600;
+    }
+}
+
+.controls {
+    .filters-card {
+        padding: 16px;
+    }
+
+    .filters-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+
+        mat-form-field {
+            min-width: 180px;
+            flex: 1;
+        }
+    }
+}
+
+.mini-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+
+    .mini-card {
+        width: 180px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+
+        label {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #6b7280;
+        }
+
+        .value {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .trend {
+            font-size: 20px;
+
+            &.up {
+                color: #22c55e;
+            }
+
+            &.down {
+                color: #ef4444;
+            }
+
+            &.equal {
+                color: #6b7280;
+            }
+        }
+    }
+}
+
+.chart-section {
+    mat-card {
+        padding: 16px 16px 24px;
+
+        h2 {
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+    }
+}
