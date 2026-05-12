@@ -1,44 +1,14 @@
 @use '@angular/material' as mat;
 
-// Obligatoire
-@include mat.core();
-
-// PALETTES
+// Palette
 $primary: mat.define-palette(mat.$indigo-palette);
 $accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
-$warn: mat.define-palette(mat.$red-palette);
 
-// THEME CLAIR
-$light-theme: mat.define-light-theme((color: (primary: $primary,
+// Thème
+$theme: mat.define-light-theme((color: (primary: $primary,
                 accent: $accent,
-                warn: $warn,
             ),
-            typography: mat.define-typography-config(),
         ));
 
-// THEME SOMBRE
-$dark-theme: mat.define-dark-theme((color: (primary: $primary,
-                accent: $accent,
-                warn: $warn,
-            ),
-            typography: mat.define-typography-config(),
-        ));
-
-// APPLICATION DES THEMES
-.light-theme {
-    @include mat.all-component-themes($light-theme);
-    background: #fafafa;
-    color: #212121;
-}
-
-.dark-theme {
-    @include mat.all-component-themes($dark-theme);
-    background: #121212;
-    color: #e0e0e0;
-}
-
-// GLOBAL
-body {
-    margin: 0;
-    font-family: Roboto, "Helvetica Neue", sans-serif;
-}
+// Appliquer le thème
+@include mat.all-component-themes($theme);

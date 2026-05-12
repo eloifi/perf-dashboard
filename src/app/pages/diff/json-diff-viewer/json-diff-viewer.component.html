@@ -1,0 +1,19 @@
+<!-- src/app/pages/diff/json-diff-viewer/json-diff-viewer.component.html -->
+
+<div class="diff-container">
+    <div *ngFor="let d of getDiff()" class="diff-item" [ngClass]="d.type">
+        <div class="path">{{ d.path }}</div>
+
+        <div class="values">
+            <div class="old" *ngIf="d.oldValue !== undefined">
+                <strong>Ancien :</strong>
+                <pre>{{ d.oldValue | json }}</pre>
+            </div>
+
+            <div class="new" *ngIf="d.newValue !== undefined">
+                <strong>Nouveau :</strong>
+                <pre>{{ d.newValue | json }}</pre>
+            </div>
+        </div>
+    </div>
+</div>

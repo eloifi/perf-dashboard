@@ -2,17 +2,26 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+
 import { ChartData, ChartOptions } from 'chart.js';
 
+// Angular Material
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-import { PerfRun } from 'src/app/model/perf-run';
-import { PerfRunService } from 'src/app/service/perfs-run.service';
+import { MatButtonModule } from '@angular/material/button';
+import { MatExpansionModule } from '@angular/material/expansion';
 
+// App model + service
+import { PerfRunService } from 'src/app/service/perfs-run.service';
+import { PerfRun } from 'src/app/model/perf-run';
+import { PerfAlert, AlertsService } from 'src/app/service/alert-service';
+import { TrendCardComponent } from './components/trend-card/trend-card.component';
+
+// Trend card
 type Trend = 'up' | 'down' | 'equal';
 
 @Component({
@@ -21,37 +30,53 @@ type Trend = 'up' | 'down' | 'equal';
   imports: [
     CommonModule,
     FormsModule,
+
+    // Material
     MatCardModule,
     MatFormFieldModule,
     MatSelectModule,
     MatInputModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    MatButtonModule,
+    MatExpansionModule,
+
+    // Custom
+    TrendCardComponent,
   ],
   templateUrl: './perfs-dashboard.component.html',
   styleUrls: ['./perfs-dashboard.component.scss'],
 })
 export class PerfsDashboardComponent implements OnInit {
+  // Dropdowns
   apps = ['way2home-autocomplete', 'way2home-search', 'way2home-api'];
   scenarios = ['smoke', 'load', 'stress'];
 
   selectedApp = this.apps[0];
   selectedScenario = this.scenarios[0];
 
+  // Date filters
   from?: Date;
   to?: Date;
 
+  // Data
   latest?: PerfRun;
   history: PerfRun[] = [];
+  alerts: PerfAlert[] = [];
 
+  // Chart.js
   chartData: ChartData<'line'> = { labels: [], datasets: [] };
   chartOptions: ChartOptions = {};
 
+  // Trends
   trendP95?: Trend;
   trendScore?: Trend;
   trendErrors?: Trend;
 
-  constructor(private api: PerfRunService) {}
+  constructor(
+    private api: PerfRunService,
+    private alertsApi: AlertsService,
+  ) {}
 
   ngOnInit(): void {
     this.reload();
@@ -61,17 +86,26 @@ export class PerfsDashboardComponent implements OnInit {
     const fromStr = this.from ? this.from.toISOString() : undefined;
     const toStr = this.to ? this.to.toISOString() : undefined;
 
+    // Latest run
     this.api
       .getLatest(this.selectedApp, this.selectedScenario)
-      .subscribe((r) => (this.latest = r));
+      .subscribe((r) => {
+        this.latest = r;
+        this.loadAlerts(r.id);
+      });
 
+    // History
     this.api
       .getHistory(this.selectedApp, this.selectedScenario, fromStr, toStr)
       .subscribe((h) => {
-        this.history = h.sort((a, b) => a.date.localeCompare(b.date)); // tri par date
+        this.history = h.sort((a, b) => a.date.localeCompare(b.date));
         this.buildChart();
         this.computeTrends();
       });
+  }
+
+  private loadAlerts(runId: number): void {
+    this.alertsApi.getByRun(runId).subscribe((a) => (this.alerts = a));
   }
 
   private buildChart(): void {
@@ -151,11 +185,8 @@ export class PerfsDashboardComponent implements OnInit {
     mode: 'higher-is-better' | 'lower-is-better',
   ): Trend {
     if (curr === prev) return 'equal';
-    if (mode === 'higher-is-better') {
-      return curr > prev ? 'up' : 'down';
-    } else {
-      return curr < prev ? 'up' : 'down';
-    }
+    if (mode === 'higher-is-better') return curr > prev ? 'up' : 'down';
+    return curr < prev ? 'up' : 'down';
   }
 
   getStatusClass(): string {

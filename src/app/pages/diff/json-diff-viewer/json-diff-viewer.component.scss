@@ -1,0 +1,47 @@
+/* src/app/pages/diff/json-diff-viewer/json-diff-viewer.component.scss */
+
+.diff-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.diff-item {
+    padding: 12px;
+    border-radius: 8px;
+    border-left: 4px solid transparent;
+    background: #f9fafb;
+
+    &.added {
+        border-color: #22c55e;
+        background: #ecfdf5;
+    }
+
+    &.removed {
+        border-color: #ef4444;
+        background: #fef2f2;
+    }
+
+    &.modified {
+        border-color: #f59e0b;
+        background: #fffbeb;
+    }
+
+    .path {
+        font-weight: 600;
+        margin-bottom: 6px;
+    }
+
+    .values {
+        display: flex;
+        gap: 16px;
+
+        pre {
+            background: #f3f4f6;
+            padding: 8px;
+            border-radius: 6px;
+            max-width: 400px;
+            overflow: auto;
+        }
+    }
+}

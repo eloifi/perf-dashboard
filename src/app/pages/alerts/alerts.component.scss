@@ -1,0 +1,47 @@
+/* src/app/pages/alerts/alerts.component.scss */
+
+h1 {
+    margin-bottom: 20px;
+}
+
+.alerts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.alert-card {
+    padding: 16px;
+
+    &.info {
+        border-left: 4px solid #3b82f6;
+    }
+
+    &.warning {
+        border-left: 4px solid #f59e0b;
+    }
+
+    &.critical {
+        border-left: 4px solid #ef4444;
+    }
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+
+        .level {
+            font-weight: bold;
+        }
+    }
+
+    .message {
+        margin-bottom: 6px;
+    }
+
+    .metric,
+    .run {
+        font-size: 14px;
+        color: #6b7280;
+    }
+}

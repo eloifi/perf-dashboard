@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { ApplicationService } from '../service/application.service';
-import { AppStore } from '../service/app.store';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
 import { MatToolbar, MatToolbarModule } from '@angular/material/toolbar';
+import { AppStore } from 'src/app/service/app.store';
+import { ApplicationService } from 'src/app/service/application.service';
 
 @Component({
   standalone: true,

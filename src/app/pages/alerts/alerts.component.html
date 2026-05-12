@@ -1,0 +1,24 @@
+<!-- src/app/pages/alerts/alerts.component.html -->
+
+<h1>Alertes</h1>
+
+<div class="alerts-list">
+    <mat-card *ngFor="let a of alerts" class="alert-card" [ngClass]="getLevelClass(a.level)">
+        <div class="header">
+            <span class="level">{{ a.level | uppercase }}</span>
+            <span class="date">{{ a.createdAt | date:'short' }}</span>
+        </div>
+
+        <div class="message">
+            {{ a.message }}
+        </div>
+
+        <div class="metric" *ngIf="a.metric">
+            <strong>Métrique :</strong> {{ a.metric }}
+        </div>
+
+        <div class="run">
+            <strong>Run :</strong> {{ a.runId }}
+        </div>
+    </mat-card>
+</div>

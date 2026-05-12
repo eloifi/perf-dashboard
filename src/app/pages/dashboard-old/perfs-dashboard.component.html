@@ -1,6 +1,7 @@
 <!-- src/app/perfs-dashboard/perfs-dashboard.component.html -->
 <div class="dashboard">
 
+    <!-- HEADER -->
     <header class="header">
         <div>
             <h1>Performance Dashboard</h1>
@@ -22,6 +23,7 @@
         </mat-card>
     </header>
 
+    <!-- FILTERS -->
     <section class="controls">
         <mat-card class="filters-card">
             <div class="filters-row">
@@ -56,38 +58,41 @@
         </mat-card>
     </section>
 
-    <section class="mini-cards" *ngIf="latest">
-        <mat-card class="mini-card">
-            <label>p95</label>
-            <span class="value">{{ latest.p95 }} ms</span>
-            <span class="trend" [ngClass]="trendP95">
-                {{ trendP95 === 'up' ? '↑' : trendP95 === 'down' ? '↓' : '→' }}
-            </span>
-        </mat-card>
+    <!-- TREND CARDS -->
+    <section class="trend-cards" *ngIf="latest">
+        <app-trend-card label="p95" [value]="latest.p95 + ' ms'" [trend]="trendP95"></app-trend-card>
+        <app-trend-card label="Score" [value]="latest.globalScore" [trend]="trendScore"></app-trend-card>
+        <app-trend-card label="Erreurs" [value]="(latest.httpReqFailed * 100) | number:'1.0-2' + '%'"
+            [trend]="trendErrors"></app-trend-card>
+    </section>
 
-        <mat-card class="mini-card">
-            <label>Score</label>
-            <span class="value">{{ latest.globalScore }}</span>
-            <span class="trend" [ngClass]="trendScore">
-                {{ trendScore === 'up' ? '↑' : trendScore === 'down' ? '↓' : '→' }}
-            </span>
-        </mat-card>
-
-        <mat-card class="mini-card">
-            <label>Erreurs</label>
-            <span class="value">{{ latest.httpReqFailed * 100 | number:'1.0-2' }}%</span>
-            <span class="trend" [ngClass]="trendErrors">
-                {{ trendErrors === 'up' ? '↑' : trendErrors === 'down' ? '↓' : '→' }}
-            </span>
+    <!-- ALERTES -->
+    <section *ngIf="alerts.length > 0">
+        <h2>Alertes</h2>
+        <mat-card *ngFor="let a of alerts" class="alert-card" [ngClass]="a.level">
+            <div class="alert-header">
+                <span class="level">{{ a.level | uppercase }}</span>
+                <span class="date">{{ a.createdAt | date:'short' }}</span>
+            </div>
+            <div class="message">{{ a.message }}</div>
+            <div class="metric" *ngIf="a.metric"><strong>Métrique :</strong> {{ a.metric }}</div>
         </mat-card>
     </section>
 
+    <!-- CHART -->
     <section class="chart-section">
         <mat-card>
             <h2>Évolution des perfs</h2>
-            <canvas baseChart [data]="chartData" [options]="chartOptions" type="line">
-            </canvas>
+            <canvas baseChart [data]="chartData" [options]="chartOptions" type="line"></canvas>
         </mat-card>
     </section>
+
+    <!-- JSON SUMMARY -->
+    <mat-expansion-panel *ngIf="latest">
+        <mat-expansion-panel-header>
+            <mat-panel-title>Résumé JSON du run</mat-panel-title>
+        </mat-expansion-panel-header>
+        <pre>{{ latest.rawSummaryJson | json }}</pre>
+    </mat-expansion-panel>
 
 </div>

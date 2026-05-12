@@ -1,4 +1,5 @@
 /* src/app/perfs-dashboard/perfs-dashboard.component.scss */
+
 .dashboard {
     padding: 24px;
     display: flex;
@@ -81,43 +82,41 @@
     }
 }
 
-.mini-cards {
+.trend-cards {
     display: flex;
-    flex-wrap: wrap;
     gap: 16px;
+    flex-wrap: wrap;
+}
 
-    .mini-card {
-        width: 180px;
+.alert-card {
+    padding: 16px;
+    margin-bottom: 12px;
+
+    &.info {
+        border-left: 4px solid #3b82f6;
+    }
+
+    &.warning {
+        border-left: 4px solid #f59e0b;
+    }
+
+    &.critical {
+        border-left: 4px solid #ef4444;
+    }
+
+    .alert-header {
         display: flex;
-        flex-direction: column;
-        gap: 4px;
+        justify-content: space-between;
+        margin-bottom: 8px;
+    }
 
-        label {
-            font-size: 12px;
-            text-transform: uppercase;
-            color: #6b7280;
-        }
+    .message {
+        margin-bottom: 6px;
+    }
 
-        .value {
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        .trend {
-            font-size: 20px;
-
-            &.up {
-                color: #22c55e;
-            }
-
-            &.down {
-                color: #ef4444;
-            }
-
-            &.equal {
-                color: #6b7280;
-            }
-        }
+    .metric {
+        font-size: 14px;
+        color: #6b7280;
     }
 }
 
@@ -129,5 +128,14 @@
             margin-bottom: 12px;
             font-size: 16px;
         }
+    }
+}
+
+mat-expansion-panel {
+    pre {
+        background: #f3f4f6;
+        padding: 12px;
+        border-radius: 8px;
+        overflow: auto;
     }
 }

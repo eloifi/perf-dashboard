@@ -31,6 +31,27 @@ export const routes: Routes = [
         component: RunDetailsPage,
         resolve: { apps: applicationsResolver },
       },
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./pages/dashboard/dashboard.component').then(
+            (m) => m.DashboardComponent,
+          ),
+      },
+      {
+        path: 'diff',
+        loadComponent: () =>
+          import('./pages/diff-runs/diff-runs-page.component').then(
+            (m) => m.DiffRunsPageComponent,
+          ),
+      },
+      {
+        path: 'diff',
+        loadComponent: () =>
+          import('./pages/diff-runs/diff-runs-page.component').then(
+            (m) => m.DiffRunsPageComponent,
+          ),
+      },
     ],
   },
 ];
