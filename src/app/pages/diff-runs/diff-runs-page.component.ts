@@ -5,15 +5,24 @@ import { PerfRun } from 'src/app/model/perf-run';
 import { PerfRunService } from 'src/app/service/perfs-run.service';
 import { JsonDiffViewerComponent } from '../jsondiff-viewer/jsondiff-viewer.component';
 import { StatusBadgeComponent } from '../status-badge/status-badge.component';
+import { ErrorRateCompareChartComponent } from '../error-rate-compare-chart/error-rate-compare-chart.component';
+import { ScoreDiffVisualComponent } from '../score-diff-visual/score-diff-visual.component';
+import { StatusDiffVisualComponent } from '../status-diff-visual/status-diff-visual.component';
+import { ScoreCompareChartComponent } from '../score-compare-chart/score-compare-chart.component';
 
 @Component({
   selector: 'app-diff-runs',
   standalone: true,
   imports: [
-    CommonModule, // <-- *ngIf, *ngFor, date, number, ngClass
-    FormsModule, // <-- ngModel
+    CommonModule, // *ngIf, *ngFor, date, number, ngClass
+    FormsModule, // ngModel
     StatusBadgeComponent,
     JsonDiffViewerComponent,
+    CommonModule,
+    ErrorRateCompareChartComponent,
+    ScoreDiffVisualComponent,
+    StatusDiffVisualComponent,
+    ScoreCompareChartComponent,
   ],
   template: `
     <h2>Comparer deux runs</h2>
@@ -102,6 +111,18 @@ import { StatusBadgeComponent } from '../status-badge/status-badge.component';
         </span>
       </td>
     </app-json-diff-viewer>
+    <app-error-rate-compare-chart
+      *ngIf="runA && runB"
+      [runA]="runA"
+      [runB]="runB"
+    >
+    </app-error-rate-compare-chart>
+    <app-score-diff-visual *ngIf="runA && runB" [runA]="runA" [runB]="runB">
+    </app-score-diff-visual>
+    <app-status-diff-visual *ngIf="runA && runB" [runA]="runA" [runB]="runB">
+    </app-status-diff-visual>
+    <app-score-compare-chart *ngIf="runA && runB" [runA]="runA" [runB]="runB">
+    </app-score-compare-chart>
   `,
   styles: [
     `
