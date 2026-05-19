@@ -1,13 +1,14 @@
+import { CommonModule } from '@angular/common';
 import {
   Component,
-  ElementRef,
-  Input,
   OnChanges,
+  Input,
   ViewChild,
+  ElementRef,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { Chart } from 'chart.js';
 import { PerfRun } from 'src/app/model/perf-run';
+
 @Component({
   selector: 'app-p95-compare-chart',
   standalone: true,

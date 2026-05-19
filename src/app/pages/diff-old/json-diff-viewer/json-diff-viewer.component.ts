@@ -3,7 +3,7 @@ import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-json-diff-viewer',
+  selector: 'app-json-diff-viewer-old',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './json-diff-viewer.component.html',

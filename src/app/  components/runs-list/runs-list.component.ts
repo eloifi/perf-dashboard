@@ -1,12 +1,12 @@
 import { Component, Input } from '@angular/core';
 import { StatusBadgeComponent } from '../status-badge/status-badge.component';
-import { PerfRun } from 'src/app/model/perf-run';
 import { CommonModule } from '@angular/common';
+import { PerfRun } from 'src/app/model/perf-run';
 
 @Component({
   selector: 'app-runs-list',
   standalone: true,
-  imports: [CommonModule, StatusBadgeComponent],
+  imports: [StatusBadgeComponent, CommonModule],
   template: `
     <table>
       <thead>

@@ -14,7 +14,7 @@ import { JsonDiffViewerComponent } from './json-diff-viewer/json-diff-viewer.com
 import { PerfAlert, AlertsService } from 'src/app/service/alert-service';
 
 @Component({
-  selector: 'app-diff-runs',
+  selector: 'app-diff-runs-old',
   standalone: true,
   imports: [
     CommonModule,

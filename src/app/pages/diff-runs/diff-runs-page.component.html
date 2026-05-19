@@ -1,0 +1,102 @@
+<div class="diff-container">
+
+  <!-- Sélecteurs -->
+  <div class="selectors">
+    <div>
+      <label>Run A</label>
+      <select [(ngModel)]="runAId" (ngModelChange)="loadRunA()">
+        <option *ngFor="let r of history" [value]="r.id">
+          {{ r.date | date:'short' }}
+        </option>
+      </select>
+    </div>
+
+    <div>
+      <label>Run B</label>
+      <select [(ngModel)]="runBId" (ngModelChange)="loadRunB()">
+        <option *ngFor="let r of history" [value]="r.id">
+          {{ r.date | date:'short' }}
+        </option>
+      </select>
+    </div>
+  </div>
+</div>
+
+----------
+<h2>Comparer deux runs</h2>
+
+<table *ngIf="runA && runB" class="compare-table">
+  <thead>
+    <tr>
+      <th>Métrique</th>
+      <th>Run A</th>
+      <th>Run B</th>
+      <th>Diff</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>P95</td>
+      <td>{{ runA.p95 }} ms</td>
+      <td>{{ runB.p95 }} ms</td>
+      <td [ngClass]="diffClass(runA.p95, runB.p95)">
+        {{ runB.p95 - runA.p95 | number: '1.0-2' }} ms
+      </td>
+    </tr>
+
+    <tr>
+      <td>Error rate</td>
+      <td>{{ runA.httpReqFailed * 100 | number: '1.0-2' }}%</td>
+      <td>{{ runB.httpReqFailed * 100 | number: '1.0-2' }}%</td>
+      <td [ngClass]="diffClass(runA.httpReqFailed, runB.httpReqFailed)">
+        {{
+        (runB.httpReqFailed - runA.httpReqFailed) * 100 | number: '1.0-2'
+        }}%
+      </td>
+    </tr>
+
+    <tr>
+      <td>Score</td>
+      <td>{{ runA.globalScore }}</td>
+      <td>{{ runB.globalScore }}</td>
+      <td [ngClass]="diffClass(runA.globalScore, runB.globalScore)">
+        {{ runB.globalScore - runA.globalScore }}
+      </td>
+    </tr>
+
+    <tr>
+      <td>Status</td>
+      <td><app-status-badge [status]="runB.status"></app-status-badge></td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>Diff JSON</h3>
+<app-json-diff-viewer *ngIf="runA && runB" [leftJson]="runA.rawSummaryJson" [rightJson]="runB.rawSummaryJson">
+</app-json-diff-viewer>
+
+<div class="diff-container">
+
+  <!-- Résumé visuel -->
+  <div class="summary-grid">
+    <app-status-diff-visual [runA]="runA" [runB]="runB"></app-status-diff-visual>
+    <app-score-diff-visual [runA]="runA" [runB]="runB"></app-score-diff-visual>
+  </div>
+
+  <!-- Graphiques -->
+  <div class="charts-grid">
+    <app-p95-compare-chart [runA]="runA" [runB]="runB"></app-p95-compare-chart>
+    <app-error-rate-compare-chart [runA]="runA" [runB]="runB"></app-error-rate-compare-chart>
+    <app-score-compare-chart [runA]="runA" [runB]="runB"></app-score-compare-chart>
+  </div>
+
+  <!-- Diff JSON -->
+  <div class="json-diff">
+    <!-- Diff JSON 
+    <app-json-diff-viewer [jsonA]="runA?.rawSummaryJson" [jsonB]="runB?.rawSummaryJson"></app-json-diff-viewer>
+    -->
+  </div>
+
+</div>

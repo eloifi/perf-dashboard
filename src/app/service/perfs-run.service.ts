@@ -20,7 +20,6 @@ export class PerfRunService {
       params: { app, scenario },
     });
   }
-
   getById(id: number): Observable<PerfRun> {
     return this.http.get<PerfRun>(`${this.baseUrl}/${id}`);
   }

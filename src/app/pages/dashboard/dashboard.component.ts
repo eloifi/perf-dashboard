@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { ErrorRateChartComponent } from 'src/app/  components/error-rate-chart/error-rate-chart.component';
+import { P95ChartComponent } from 'src/app/  components/p95-chart/p95-chart.component';
+import { RunLatestComponent } from 'src/app/  components/run-latest/run-latest.component';
+import { RunsListComponent } from 'src/app/  components/runs-list/runs-list.component';
 import { PerfRun } from 'src/app/model/perf-run';
 import { PerfRunService } from 'src/app/service/perfs-run.service';
-import { ErrorRateChartComponent } from '../error-ratechart/error-rate-chart.component';
-import { RunLatestComponent } from '../latest/run-latest.component';
-import { P95ChartComponent } from '../p95-chart/p95-chart.component';
-import { RunsListComponent } from '../runs-list/runs-list.component';
 
 @Component({
   selector: 'app-dashboard',

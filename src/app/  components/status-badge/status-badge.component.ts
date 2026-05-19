@@ -1,10 +1,11 @@
-import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-status-badge',
   standalone: true,
   imports: [CommonModule], // <-- obligatoire
+
   template: `
     <span class="badge" [ngClass]="status.toLowerCase()">
       {{ status }}
