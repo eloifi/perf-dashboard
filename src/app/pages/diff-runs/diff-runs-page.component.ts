@@ -107,4 +107,69 @@ export class DiffRunsPageComponent implements OnInit {
     if (d < 0) return '↓'; // Run B est meilleur (moins de temps)
     return '↑'; // Run B est pire (plus de temps)
   }
+
+  sortedMetricKeys(): string[] {
+    const keys = this.metricKeys(this.runA?.parsedMetrics);
+
+    return keys.sort((k1, k2) => {
+      const a1 = this.runA?.parsedMetrics[k1]?.values?.['p(95)'];
+      const b1 = this.runB?.parsedMetrics[k1]?.values?.['p(95)'];
+      const d1 = (b1 ?? 0) - (a1 ?? 0);
+
+      const a2 = this.runA?.parsedMetrics[k2]?.values?.['p(95)'];
+      const b2 = this.runB?.parsedMetrics[k2]?.values?.['p(95)'];
+      const d2 = (b2 ?? 0) - (a2 ?? 0);
+
+      return d2 - d1; // pire → meilleur
+    });
+  }
+
+  exportTechCSV() {
+    const rows = [];
+    rows.push([
+      'metric',
+      'avgA',
+      'avgB',
+      'minA',
+      'minB',
+      'maxA',
+      'maxB',
+      'p95A',
+      'p95B',
+      'p99A',
+      'p99B',
+      'deltaP95',
+    ]);
+
+    for (const key of this.sortedMetricKeys()) {
+      const a = this.runA?.parsedMetrics[key]?.values;
+      const b = this.runB?.parsedMetrics[key]?.values;
+
+      rows.push([
+        key,
+        a?.avg ?? '',
+        b?.avg ?? '',
+        a?.min ?? '',
+        b?.min ?? '',
+        a?.max ?? '',
+        b?.max ?? '',
+        a?.['p(95)'] ?? '',
+        b?.['p(95)'] ?? '',
+        a?.['p(99)'] ?? '',
+        b?.['p(99)'] ?? '',
+        (b?.['p(95)'] ?? 0) - (a?.['p(95)'] ?? 0),
+      ]);
+    }
+
+    const csv = rows.map((r) => r.join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'tech-metrics.csv';
+    a.click();
+
+    window.URL.revokeObjectURL(url);
+  }
 }

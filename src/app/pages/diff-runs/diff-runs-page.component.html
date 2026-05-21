@@ -69,81 +69,44 @@
   </button>
 
   <div *ngIf="showAdvanced">
+    <button class="advanced-toggle" (click)="exportTechCSV()">
+      Exporter CSV
+    </button>
 
     <div *ngIf="runA.parsedMetrics && runB.parsedMetrics">
-
       <table class="tech-table">
         <thead>
           <tr>
             <th>Métrique</th>
-            <th>Run A</th>
-            <th>Run B</th>
-            <th>Δ</th>
+            <th>avg</th>
+            <th>min</th>
+            <th>max</th>
+            <th>p95</th>
+            <th>p99</th>
+            <th>Δ (p95)</th>
           </tr>
         </thead>
 
         <tbody>
+          <ng-container *ngFor="let key of sortedMetricKeys()">
 
-          <ng-container *ngFor="let key of metricKeys(runA.parsedMetrics)">
-
-            <!-- AVG -->
             <tr>
-              <td>{{ key }} (avg)</td>
-              <td>{{ runA.parsedMetrics?.[key]?.values?.avg ?? '—' }}</td>
-              <td>{{ runB.parsedMetrics?.[key]?.values?.avg ?? '—' }}</td>
-              <td
-                [ngClass]="deltaClass(runA.parsedMetrics?.[key]?.values?.avg, runB.parsedMetrics?.[key]?.values?.avg)">
-                {{ deltaArrow(runA.parsedMetrics[key]?.values?.avg, runB.parsedMetrics[key]?.values?.avg) }}
-                {{ diff(runA.parsedMetrics[key]?.values?.avg, runB.parsedMetrics[key]?.values?.avg) }}
-              </td>
-            </tr>
+              <td>{{ key }}</td>
 
-            <!-- MIN -->
-            <tr>
-              <td>{{ key }} (min)</td>
-              <td>{{ runA.parsedMetrics?.[key]?.values?.min ?? '—' }}</td>
-              <td>{{ runB.parsedMetrics?.[key]?.values?.min ?? '—' }}</td>
-              <td
-                [ngClass]="deltaClass(runA.parsedMetrics?.[key]?.values?.min, runB.parsedMetrics?.[key]?.values?.min)">
-                {{ diff(runA.parsedMetrics?.[key]?.values?.min, runB.parsedMetrics?.[key]?.values?.min) }}
-              </td>
-            </tr>
+              <td>{{ runA.parsedMetrics[key]?.values?.avg ?? '—' }}</td>
+              <td>{{ runA.parsedMetrics[key]?.values?.min ?? '—' }}</td>
+              <td>{{ runA.parsedMetrics[key]?.values?.max ?? '—' }}</td>
+              <td>{{ runA.parsedMetrics[key]?.values?.['p(95)'] ?? '—' }}</td>
+              <td>{{ runA.parsedMetrics[key]?.values?.['p(99)'] ?? '—' }}</td>
 
-            <!-- MAX -->
-            <tr>
-              <td>{{ key }} (max)</td>
-              <td>{{ runA.parsedMetrics?.[key]?.values?.max ?? '—' }}</td>
-              <td>{{ runB.parsedMetrics?.[key]?.values?.max ?? '—' }}</td>
               <td
-                [ngClass]="deltaClass(runA.parsedMetrics?.[key]?.values?.max, runB.parsedMetrics?.[key]?.values?.max)">
-                {{ diff(runA.parsedMetrics?.[key]?.values?.max, runB.parsedMetrics?.[key]?.values?.max) }}
-              </td>
-            </tr>
-
-            <!-- P95 -->
-            <tr>
-              <td>{{ key }} (p95)</td>
-              <td>{{ runA.parsedMetrics?.[key]?.values?.['p(95)'] ?? '—' }}</td>
-              <td>{{ runB.parsedMetrics?.[key]?.values?.['p(95)'] ?? '—' }}</td>
-              <td
-                [ngClass]="deltaClass(runA.parsedMetrics?.[key]?.values?.['p(95)'], runB.parsedMetrics?.[key]?.values?.['p(95)'])">
-                {{ diff(runA.parsedMetrics?.[key]?.values?.['p(95)'], runB.parsedMetrics?.[key]?.values?.['p(95)']) }}
-              </td>
-            </tr>
-
-            <!-- P99 -->
-            <tr>
-              <td>{{ key }} (p99)</td>
-              <td>{{ runA.parsedMetrics?.[key]?.values?.['p(99)'] ?? '—' }}</td>
-              <td>{{ runB.parsedMetrics?.[key]?.values?.['p(99)'] ?? '—' }}</td>
-              <td
-                [ngClass]="deltaClass(runA.parsedMetrics?.[key]?.values?.['p(99)'], runB.parsedMetrics?.[key]?.values?.['p(99)'])">
-                {{ diff(runA.parsedMetrics?.[key]?.values?.['p(99)'], runB.parsedMetrics?.[key]?.values?.['p(99)']) }}
+                [ngClass]="deltaClass(runA.parsedMetrics[key]?.values?.['p(95)'], runB.parsedMetrics[key]?.values?.['p(95)'])">
+                {{ deltaArrow(runA.parsedMetrics[key]?.values?.['p(95)'], runB.parsedMetrics[key]?.values?.['p(95)']) }}
+                {{ diff(runA.parsedMetrics[key]?.values?.['p(95)'], runB.parsedMetrics[key]?.values?.['p(95)']) }}
               </td>
             </tr>
 
           </ng-container>
-
         </tbody>
       </table>
 
