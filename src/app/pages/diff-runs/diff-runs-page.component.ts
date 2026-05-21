@@ -26,63 +26,56 @@ import { P95CompareChartComponent } from '../p95-compare-chart/p95-compare-chart
     P95CompareChartComponent,
   ],
   templateUrl: './diff-runs-page.component.html',
-  styles: [
-    `
-      .selectors {
-        display: flex;
-        gap: 20px;
-        margin-bottom: 20px;
-      }
-      .compare-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-      }
-      .compare-table th,
-      .compare-table td {
-        padding: 8px;
-        border-bottom: 1px solid #ddd;
-      }
-      .positive {
-        color: #2ecc71;
-        font-weight: bold;
-      }
-      .negative {
-        color: #e74c3c;
-        font-weight: bold;
-      }
-    `,
-  ],
+  styleUrls: ['./diff-runs-page.component.scss'],
 })
 export class DiffRunsPageComponent implements OnInit {
   history: PerfRun[] = [];
   runAId!: number;
   runBId!: number;
 
-  runA!: PerfRun;
-  runB!: PerfRun;
+  runA: PerfRun | null = null;
+  runB: PerfRun | null = null;
+  showAdvanced = false;
 
   constructor(private service: PerfRunService) {}
 
   ngOnInit() {
     this.service.getHistory('way2home-search', 'load').subscribe((h) => {
+      console.log('History loaded:', h);
       this.history = h;
 
       if (h.length >= 2) {
         this.runAId = h[h.length - 2].id;
         this.runBId = h[h.length - 1].id;
-        this.loadRunA();
-        this.loadRunB();
+      } else if (h.length === 1) {
+        this.runAId = h[0].id;
+        this.runBId = h[0].id;
+      } else {
+        return;
       }
+
+      console.log('runAId:', this.runAId);
+      console.log('runBId:', this.runBId);
+
+      this.loadRunA();
+      this.loadRunB();
     });
   }
 
   loadRunA() {
-    this.service.getById(this.runAId).subscribe((r) => (this.runA = r));
+    console.log('loadRunA called with id:', this.runAId);
+    this.service.getById(this.runAId).subscribe((r) => {
+      console.log('runA loaded:', r);
+      this.runA = r;
+    });
   }
 
   loadRunB() {
-    this.service.getById(this.runBId).subscribe((r) => (this.runB = r));
+    console.log('loadRunB called with id:', this.runBId);
+    this.service.getById(this.runBId).subscribe((r) => {
+      console.log('runB loaded:', r);
+      this.runB = r;
+    });
   }
 
   diffClass(a: number, b: number) {

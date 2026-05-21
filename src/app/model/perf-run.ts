@@ -10,4 +10,5 @@ export interface PerfRun {
   rawSummaryJson: string;
   app: string;
   checksSuccessRate: number;
+  parsedMetrics?: any;
 }
