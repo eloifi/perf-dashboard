@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { PerfRun } from '../model/perf-run';
 
 @Injectable({ providedIn: 'root' })
@@ -20,7 +20,18 @@ export class PerfRunService {
       params: { app, scenario },
     });
   }
+
   getById(id: number): Observable<PerfRun> {
-    return this.http.get<PerfRun>(`${this.baseUrl}/${id}`);
+    return this.http.get<PerfRun>(`${this.baseUrl}/${id}`).pipe(
+      map((run) => {
+        try {
+          const parsed = JSON.parse(run.rawSummaryJson);
+          run.parsedMetrics = parsed.metrics;
+        } catch {
+          run.parsedMetrics = null;
+        }
+        return run;
+      }),
+    );
   }
 }

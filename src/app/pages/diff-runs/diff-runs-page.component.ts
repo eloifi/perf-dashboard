@@ -78,9 +78,33 @@ export class DiffRunsPageComponent implements OnInit {
     });
   }
 
-  diffClass(a: number, b: number) {
-    if (b < a) return 'positive';
-    if (b > a) return 'negative';
-    return '';
+  metricKeys(m: any): string[] {
+    return Object.keys(m).filter((k) => m[k]?.values);
+  }
+
+  diff(a: number | undefined, b: number | undefined): string {
+    if (a == null || b == null) return '—';
+    const d = b - a;
+    return d === 0 ? '0' : d.toFixed(3);
+  }
+
+  deltaClass(a: number | undefined, b: number | undefined): string {
+    if (a == null || b == null) return 'delta-neutral';
+
+    const d = b - a;
+
+    if (d === 0) return 'delta-neutral';
+    if (d < 0) return 'delta-good'; // Run B est meilleur
+    return 'delta-bad'; // Run B est pire
+  }
+
+  deltaArrow(a: number | undefined, b: number | undefined): string {
+    if (a == null || b == null) return '→'; // neutre
+
+    const d = b - a;
+
+    if (d === 0) return '→'; // égal
+    if (d < 0) return '↓'; // Run B est meilleur (moins de temps)
+    return '↑'; // Run B est pire (plus de temps)
   }
 }

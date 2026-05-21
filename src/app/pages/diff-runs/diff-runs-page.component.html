@@ -1,5 +1,12 @@
+<!-- CHARGEMENT -->
+<ng-template #loading>
+  <p>Chargement…</p>
+</ng-template>
+
+<!-- BLOC PRINCIPAL : tableau + graphs + panneau technique -->
 <div *ngIf="runA && runB; else loading">
 
+  <!-- TABLEAU COMPARAISON -->
   <h2>Comparaison des runs</h2>
 
   <table class="compare-table">
@@ -43,8 +50,103 @@
     </tbody>
   </table>
 
-</div>
+  <!-- GRAPHIQUES -->
+  <div class="charts-section">
 
-<ng-template #loading>
-  <p>Chargement…</p>
-</ng-template>
+    <h3>Graphique P95</h3>
+    <app-p95-compare-chart [runA]="runA" [runB]="runB"></app-p95-compare-chart>
+
+    <h3>Graphique Error Rate</h3>
+    <app-error-rate-compare-chart [runA]="runA" [runB]="runB"></app-error-rate-compare-chart>
+
+    <h3>Graphique Score</h3>
+    <app-score-compare-chart [runA]="runA" [runB]="runB"></app-score-compare-chart>
+
+  </div>
+
+  <button class="advanced-toggle" (click)="showAdvanced = !showAdvanced">
+    {{ showAdvanced ? '▼ Masquer les détails techniques' : '► Afficher les détails techniques' }}
+  </button>
+
+  <div *ngIf="showAdvanced">
+
+    <div *ngIf="runA.parsedMetrics && runB.parsedMetrics">
+
+      <table class="tech-table">
+        <thead>
+          <tr>
+            <th>Métrique</th>
+            <th>Run A</th>
+            <th>Run B</th>
+            <th>Δ</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          <ng-container *ngFor="let key of metricKeys(runA.parsedMetrics)">
+
+            <!-- AVG -->
+            <tr>
+              <td>{{ key }} (avg)</td>
+              <td>{{ runA.parsedMetrics?.[key]?.values?.avg ?? '—' }}</td>
+              <td>{{ runB.parsedMetrics?.[key]?.values?.avg ?? '—' }}</td>
+              <td
+                [ngClass]="deltaClass(runA.parsedMetrics?.[key]?.values?.avg, runB.parsedMetrics?.[key]?.values?.avg)">
+                {{ deltaArrow(runA.parsedMetrics[key]?.values?.avg, runB.parsedMetrics[key]?.values?.avg) }}
+                {{ diff(runA.parsedMetrics[key]?.values?.avg, runB.parsedMetrics[key]?.values?.avg) }}
+              </td>
+            </tr>
+
+            <!-- MIN -->
+            <tr>
+              <td>{{ key }} (min)</td>
+              <td>{{ runA.parsedMetrics?.[key]?.values?.min ?? '—' }}</td>
+              <td>{{ runB.parsedMetrics?.[key]?.values?.min ?? '—' }}</td>
+              <td
+                [ngClass]="deltaClass(runA.parsedMetrics?.[key]?.values?.min, runB.parsedMetrics?.[key]?.values?.min)">
+                {{ diff(runA.parsedMetrics?.[key]?.values?.min, runB.parsedMetrics?.[key]?.values?.min) }}
+              </td>
+            </tr>
+
+            <!-- MAX -->
+            <tr>
+              <td>{{ key }} (max)</td>
+              <td>{{ runA.parsedMetrics?.[key]?.values?.max ?? '—' }}</td>
+              <td>{{ runB.parsedMetrics?.[key]?.values?.max ?? '—' }}</td>
+              <td
+                [ngClass]="deltaClass(runA.parsedMetrics?.[key]?.values?.max, runB.parsedMetrics?.[key]?.values?.max)">
+                {{ diff(runA.parsedMetrics?.[key]?.values?.max, runB.parsedMetrics?.[key]?.values?.max) }}
+              </td>
+            </tr>
+
+            <!-- P95 -->
+            <tr>
+              <td>{{ key }} (p95)</td>
+              <td>{{ runA.parsedMetrics?.[key]?.values?.['p(95)'] ?? '—' }}</td>
+              <td>{{ runB.parsedMetrics?.[key]?.values?.['p(95)'] ?? '—' }}</td>
+              <td
+                [ngClass]="deltaClass(runA.parsedMetrics?.[key]?.values?.['p(95)'], runB.parsedMetrics?.[key]?.values?.['p(95)'])">
+                {{ diff(runA.parsedMetrics?.[key]?.values?.['p(95)'], runB.parsedMetrics?.[key]?.values?.['p(95)']) }}
+              </td>
+            </tr>
+
+            <!-- P99 -->
+            <tr>
+              <td>{{ key }} (p99)</td>
+              <td>{{ runA.parsedMetrics?.[key]?.values?.['p(99)'] ?? '—' }}</td>
+              <td>{{ runB.parsedMetrics?.[key]?.values?.['p(99)'] ?? '—' }}</td>
+              <td
+                [ngClass]="deltaClass(runA.parsedMetrics?.[key]?.values?.['p(99)'], runB.parsedMetrics?.[key]?.values?.['p(99)'])">
+                {{ diff(runA.parsedMetrics?.[key]?.values?.['p(99)'], runB.parsedMetrics?.[key]?.values?.['p(99)']) }}
+              </td>
+            </tr>
+
+          </ng-container>
+
+        </tbody>
+      </table>
+
+    </div>
+
+  </div>

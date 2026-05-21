@@ -1,57 +1,75 @@
-.advanced-panel {
-  margin-top: 20px;
-  border-top: 1px solid #ddd;
-  padding-top: 10px;
-}
-
+/* Bouton collapsable */
 .advanced-toggle {
+  margin-top: 20px;
+  padding: 6px 10px;
   background: #f5f5f5;
   border: 1px solid #ccc;
-  padding: 6px 10px;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 13px;
 }
 
-.advanced-toggle:hover {
-  background: #e9e9e9;
-}
-
-.advanced-content {
-  margin-top: 15px;
-}
-
-.metric-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 12px;
-  margin-bottom: 20px;
-}
-
+/* Cartes de métriques */
 .metric-card {
+  margin-top: 15px;
+  padding: 12px;
   background: #fafafa;
   border: 1px solid #ddd;
-  padding: 10px;
-  border-radius: 4px;
+  border-radius: 6px;
 }
 
 .metric-card .label {
-  font-size: 12px;
-  color: #666;
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 6px;
 }
 
 .metric-card .value {
-  font-size: 14px;
-  font-weight: bold;
-  margin-top: 4px;
+  font-size: 13px;
+  margin-left: 10px;
 }
 
-.raw-json {
-  background: #111;
-  color: #eee;
-  padding: 10px;
-  border-radius: 4px;
-  max-height: 300px;
-  overflow: auto;
-  font-size: 11px;
+/* Section des graphiques */
+.charts-section {
+  margin-top: 20px;
+}
+
+.charts-section h3 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+/* Tableau technique */
+.tech-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.tech-table th,
+.tech-table td {
+  border: 1px solid #ddd;
+  padding: 6px 10px;
+}
+
+.tech-table th {
+  background: #f5f5f5;
+  font-weight: bold;
+}
+
+/* Couleurs pour les deltas */
+.delta-good {
+  color: #0a8a0a;
+  /* vert */
+  font-weight: bold;
+}
+
+.delta-bad {
+  color: #c62828;
+  /* rouge */
+  font-weight: bold;
+}
+
+.delta-neutral {
+  color: #666;
+  /* gris */
 }
