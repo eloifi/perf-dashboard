@@ -4,7 +4,7 @@ import * as Diff from 'diff';
 @Component({
   selector: 'app-json-diff-viewer',
   standalone: true,
-  template: ` <pre [innerHTML]="diffHtml"></pre> `,
+  template: `<pre [innerHTML]="diffHtml"></pre>`,
   styles: [
     `
       .added {
@@ -19,12 +19,13 @@ import * as Diff from 'diff';
   ],
 })
 export class JsonDiffViewerComponent {
-  @Input() set leftJson(value: string) {
-    this.left = value;
+  @Input() set runA(value: any) {
+    this.left = JSON.stringify(value?.runSummaryJson ?? {}, null, 2);
     this.computeDiff();
   }
-  @Input() set rightJson(value: string) {
-    this.right = value;
+
+  @Input() set runB(value: any) {
+    this.right = JSON.stringify(value?.runSummaryJson ?? {}, null, 2);
     this.computeDiff();
   }
 

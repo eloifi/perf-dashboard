@@ -1,0 +1,22 @@
+<div *ngIf="run" class="card">
+  <h2>{{ run.app }} / {{ run.scenario }}</h2>
+
+  <p><strong>Date :</strong> {{ run.date }}</p>
+
+  <p><strong>P95 :</strong> {{ run.p95 }} ms</p>
+  <p><strong>Error rate :</strong> {{ run.httpReqFailed }}</p>
+  <p><strong>Score :</strong> {{ run.globalScore }}</p>
+
+  <p>
+    <strong>Status :</strong>
+    <span [ngClass]="run.status.toLowerCase()">
+      {{ run.status }}
+    </span>
+  </p>
+
+  <h3>Checks success rate</h3>
+  <p>{{ run.checksSuccessRate | number:'1.2-2' }}</p>
+
+  <h3>Raw JSON</h3>
+  <pre>{{ run.rawSummaryJson | json }}</pre>
+</div>

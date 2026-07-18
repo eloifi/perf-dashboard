@@ -1,14 +1,15 @@
-// src/app/models/perf-run.model.ts
 export interface PerfRun {
   id: number;
+  app: string;
+  scenario: string;
   date: string;
+
   p95: number;
   httpReqFailed: number;
   globalScore: number;
-  status: 'OK' | 'WARN' | 'CRITICAL';
-  scenario: string;
-  rawSummaryJson: string;
-  app: string;
+  status: string;
+
+  rawSummaryJson: any;
+  parsedMetrics: any;
   checksSuccessRate: number;
-  parsedMetrics?: any;
 }

@@ -73,3 +73,30 @@
   color: #666;
   /* gris */
 }
+
+/* Heatmap */
+.heatmap-good {
+  background: #d4edda;
+  color: #155724;
+}
+
+.heatmap-warn {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.heatmap-bad {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.heatmap-verybad {
+  background: #f5c6cb;
+  color: #721c24;
+  font-weight: bold;
+}
+
+.heatmap-none {
+  background: #f0f0f0;
+  color: #666;
+}

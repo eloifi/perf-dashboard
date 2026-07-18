@@ -1,115 +1,159 @@
-<!-- CHARGEMENT -->
-<ng-template #loading>
-  <p>Chargement…</p>
-</ng-template>
+<div class="diff-container">
 
-<!-- BLOC PRINCIPAL : tableau + graphs + panneau technique -->
-<div *ngIf="runA && runB; else loading">
+  <h1>Comparaison des runs</h1>
 
-  <!-- TABLEAU COMPARAISON -->
-  <h2>Comparaison des runs</h2>
-
-  <table class="compare-table">
-    <thead>
-      <tr>
-        <th>Métrique</th>
-        <th>Run A</th>
-        <th>Run B</th>
-        <th>Δ</th>
-      </tr>
-    </thead>
-
-    <tbody>
-      <tr>
-        <td>P95</td>
-        <td>{{ runA.p95 }} ms</td>
-        <td>{{ runB.p95 }} ms</td>
-        <td>{{ runB.p95 - runA.p95 }} ms</td>
-      </tr>
-
-      <tr>
-        <td>Error rate</td>
-        <td>{{ runA.httpReqFailed * 100 }}%</td>
-        <td>{{ runB.httpReqFailed * 100 }}%</td>
-        <td>{{ (runB.httpReqFailed - runA.httpReqFailed) * 100 }}%</td>
-      </tr>
-
-      <tr>
-        <td>Score</td>
-        <td>{{ runA.globalScore }}</td>
-        <td>{{ runB.globalScore }}</td>
-        <td>{{ runB.globalScore - runA.globalScore }}</td>
-      </tr>
-
-      <tr>
-        <td>Status</td>
-        <td>{{ runA.status }}</td>
-        <td>{{ runB.status }}</td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-
-  <!-- GRAPHIQUES -->
-  <div class="charts-section">
-
-    <h3>Graphique P95</h3>
-    <app-p95-compare-chart [runA]="runA" [runB]="runB"></app-p95-compare-chart>
-
-    <h3>Graphique Error Rate</h3>
-    <app-error-rate-compare-chart [runA]="runA" [runB]="runB"></app-error-rate-compare-chart>
-
-    <h3>Graphique Score</h3>
-    <app-score-compare-chart [runA]="runA" [runB]="runB"></app-score-compare-chart>
-
-  </div>
-
-  <button class="advanced-toggle" (click)="showAdvanced = !showAdvanced">
-    {{ showAdvanced ? '▼ Masquer les détails techniques' : '► Afficher les détails techniques' }}
-  </button>
-
-  <div *ngIf="showAdvanced">
-    <button class="advanced-toggle" (click)="exportTechCSV()">
-      Exporter CSV
-    </button>
-
-    <div *ngIf="runA.parsedMetrics && runB.parsedMetrics">
-      <table class="tech-table">
-        <thead>
-          <tr>
-            <th>Métrique</th>
-            <th>avg</th>
-            <th>min</th>
-            <th>max</th>
-            <th>p95</th>
-            <th>p99</th>
-            <th>Δ (p95)</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          <ng-container *ngFor="let key of sortedMetricKeys()">
-
-            <tr>
-              <td>{{ key }}</td>
-
-              <td>{{ runA.parsedMetrics[key]?.values?.avg ?? '—' }}</td>
-              <td>{{ runA.parsedMetrics[key]?.values?.min ?? '—' }}</td>
-              <td>{{ runA.parsedMetrics[key]?.values?.max ?? '—' }}</td>
-              <td>{{ runA.parsedMetrics[key]?.values?.['p(95)'] ?? '—' }}</td>
-              <td>{{ runA.parsedMetrics[key]?.values?.['p(99)'] ?? '—' }}</td>
-
-              <td
-                [ngClass]="deltaClass(runA.parsedMetrics[key]?.values?.['p(95)'], runB.parsedMetrics[key]?.values?.['p(95)'])">
-                {{ deltaArrow(runA.parsedMetrics[key]?.values?.['p(95)'], runB.parsedMetrics[key]?.values?.['p(95)']) }}
-                {{ diff(runA.parsedMetrics[key]?.values?.['p(95)'], runB.parsedMetrics[key]?.values?.['p(95)']) }}
-              </td>
-            </tr>
-
-          </ng-container>
-        </tbody>
-      </table>
-
+  <div class="run-info">
+    <div>
+      <h3>Run A (latest)</h3>
+      <app-status-badge [status]="runA?.status ?? ''"></app-status-badge>
+      <p>Date : {{ runA?.date | date:'short' }}</p>
+      <p>Score : {{ runA?.globalScore }}</p>
+      <p>P95 : {{ runA?.p95 }} ms</p>
+      <p>Error rate : {{ runA?.httpReqFailed }}%</p>
     </div>
 
+    <div>
+      <h3>Run B (previous)</h3>
+      <app-status-badge [status]="runB?.status ?? ''"></app-status-badge>
+      <p>Date : {{ runB?.date | date:'short' }}</p>
+      <p>Score : {{ runB?.globalScore }}</p>
+      <p>P95 : {{ runB?.p95 }} ms</p>
+      <p>Error rate : {{ runB?.httpReqFailed }}%</p>
+    </div>
   </div>
+
+  <h2>Résumé des métriques principales</h2>
+
+  <table class="compare-table" *ngIf="runA && runB">
+    <tr>
+      <th>Métrique</th>
+      <th>Run A</th>
+      <th>Run B</th>
+      <th>Δ</th>
+    </tr>
+
+    <tr>
+      <td>P95</td>
+      <td>{{ runA.p95 }} ms</td>
+      <td>{{ runB.p95 }} ms</td>
+      <td [ngClass]="deltaClass(runA.p95, runB.p95)">
+        {{ diff(runA.p95, runB.p95) }} ms {{ deltaArrow(runA.p95, runB.p95) }}
+      </td>
+    </tr>
+
+    <tr>
+      <td>Error rate</td>
+      <td>{{ runA.httpReqFailed }}%</td>
+      <td>{{ runB.httpReqFailed }}%</td>
+      <td [ngClass]="deltaClass(runA.httpReqFailed, runB.httpReqFailed)">
+        {{ diff(runA.httpReqFailed, runB.httpReqFailed) }}% {{ deltaArrow(runA.httpReqFailed, runB.httpReqFailed) }}
+      </td>
+    </tr>
+
+    <tr>
+      <td>Score</td>
+      <td>{{ runA.globalScore }}</td>
+      <td>{{ runB.globalScore }}</td>
+      <td [ngClass]="deltaClass(runA.globalScore, runB.globalScore)">
+        {{ diff(runA.globalScore, runB.globalScore) }} {{ deltaArrow(runA.globalScore, runB.globalScore) }}
+      </td>
+    </tr>
+
+    <tr>
+      <td>Status</td>
+      <td><app-status-badge [status]="runA?.status ?? ''"></app-status-badge></td>
+      <td><app-status-badge [status]="runB?.status ?? ''"></app-status-badge></td>
+      <td></td>
+    </tr>
+  </table>
+
+  <h2>Graphiques comparatifs</h2>
+
+  <app-p95-compare-chart *ngIf="runA && runB" [runA]="runA" [runB]="runB"></app-p95-compare-chart>
+  <app-error-rate-compare-chart *ngIf="runA && runB" [runA]="runA" [runB]="runB"></app-error-rate-compare-chart>
+  <app-score-compare-chart *ngIf="runA && runB" [runA]="runA" [runB]="runB"></app-score-compare-chart>
+  <app-status-diff-visual *ngIf="runA && runB" [runA]="runA" [runB]="runB"></app-status-diff-visual>
+  <app-score-diff-visual *ngIf="runA && runB" [runA]="runA" [runB]="runB"></app-score-diff-visual>
+
+  <h2>Diff JSON complet</h2>
+
+  <app-json-diff-viewer *ngIf="runA && runB" [runA]="runA" [runB]="runB"></app-json-diff-viewer>
+
+  <h2>Métriques techniques détaillées</h2>
+
+  <button (click)="showAdvanced = !showAdvanced">
+    {{ showAdvanced ? 'Masquer les métriques avancées' : 'Afficher les métriques avancées' }}
+  </button>
+
+  <div *ngIf="showAdvanced && runA && runB" class="advanced-metrics">
+
+    <table class="tech-table">
+      <tr>
+        <th>Métrique</th>
+        <th>Avg A</th>
+        <th>Avg B</th>
+        <th>Min A</th>
+        <th>Min B</th>
+        <th>Max A</th>
+        <th>Max B</th>
+        <th>P95 A</th>
+        <th>P95 B</th>
+        <th>P99 A</th>
+        <th>P99 B</th>
+        <th>Δ P95</th>
+      </tr>
+
+      <tr *ngFor="let key of sortedMetricKeys()">
+        <td>{{ key }}</td>
+
+        <td [ngClass]="heatmapClass(runA?.parsedMetrics[key]?.values?.avg, 'avg')">
+          {{ runA?.parsedMetrics[key]?.values?.avg }}
+        </td>
+
+        <td [ngClass]="heatmapClass(runB?.parsedMetrics[key]?.values?.avg, 'avg')">
+          {{ runB?.parsedMetrics[key]?.values?.avg }}
+        </td>
+
+        <td [ngClass]="heatmapClass(runA?.parsedMetrics[key]?.values?.min, 'min')">
+          {{ runA?.parsedMetrics[key]?.values?.min }}
+        </td>
+
+        <td [ngClass]="heatmapClass(runB?.parsedMetrics[key]?.values?.min, 'min')">
+          {{ runB?.parsedMetrics[key]?.values?.min }}
+        </td>
+
+        <td [ngClass]="heatmapClass(runA?.parsedMetrics[key]?.values?.max, 'max')">
+          {{ runA?.parsedMetrics[key]?.values?.max }}
+        </td>
+
+        <td [ngClass]="heatmapClass(runB?.parsedMetrics[key]?.values?.max, 'max')">
+          {{ runB?.parsedMetrics[key]?.values?.max }}
+        </td>
+
+        <td [ngClass]="heatmapClass(runA?.parsedMetrics[key]?.values?.['p(95)'], 'p(95)')">
+          {{ runA?.parsedMetrics[key]?.values?.['p(95)'] }}
+        </td>
+
+        <td [ngClass]="heatmapClass(runB?.parsedMetrics[key]?.values?.['p(95)'], 'p(95)')">
+          {{ runB?.parsedMetrics[key]?.values?.['p(95)'] }}
+        </td>
+
+        <td [ngClass]="heatmapClass(runA?.parsedMetrics[key]?.values?.['p(99)'], 'p(99)')">
+          {{ runA?.parsedMetrics[key]?.values?.['p(99)'] }}
+        </td>
+
+        <td [ngClass]="heatmapClass(runB?.parsedMetrics[key]?.values?.['p(99)'], 'p(99)')">
+          {{ runB?.parsedMetrics[key]?.values?.['p(99)'] }}
+        </td>
+
+        <td>
+          {{ (runB?.parsedMetrics[key]?.values?.['p(95)'] ?? 0) -
+          (runA?.parsedMetrics[key]?.values?.['p(95)'] ?? 0) }}
+        </td>
+      </tr>
+    </table>
+
+    <button (click)="exportTechCSV()">Exporter CSV</button>
+  </div>
+
+</div>

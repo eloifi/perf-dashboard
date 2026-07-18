@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { StatusBadgeComponent } from 'src/app/  components/status-badge/status-badge.component';
+import { StatusBadgeComponent } from 'src/app/components/status-badge/status-badge.component';
 import { PerfRun } from 'src/app/model/perf-run';
 import { PerfRunService } from 'src/app/service/perfs-run.service';
 import { JsonDiffViewerComponent } from '../jsondiff-viewer/jsondiff-viewer.component';
@@ -15,14 +15,14 @@ import { P95CompareChartComponent } from '../p95-compare-chart/p95-compare-chart
   selector: 'app-diff-runs',
   standalone: true,
   imports: [
-    CommonModule, // <-- *ngIf, *ngFor, date, number, ngClass
-    FormsModule, // <-- ngModel
+    CommonModule,
+    FormsModule,
     ErrorRateCompareChartComponent,
     ScoreCompareChartComponent,
     StatusDiffVisualComponent,
     ScoreDiffVisualComponent,
-    JsonDiffViewerComponent,
     StatusBadgeComponent,
+    JsonDiffViewerComponent,
     P95CompareChartComponent,
   ],
   templateUrl: './diff-runs-page.component.html',
@@ -35,7 +35,9 @@ export class DiffRunsPageComponent implements OnInit {
 
   runA: PerfRun | null = null;
   runB: PerfRun | null = null;
+
   showAdvanced = false;
+  showNetwork = false;
 
   constructor(private service: PerfRunService) {}
 
@@ -94,18 +96,18 @@ export class DiffRunsPageComponent implements OnInit {
     const d = b - a;
 
     if (d === 0) return 'delta-neutral';
-    if (d < 0) return 'delta-good'; // Run B est meilleur
-    return 'delta-bad'; // Run B est pire
+    if (d < 0) return 'delta-good';
+    return 'delta-bad';
   }
 
   deltaArrow(a: number | undefined, b: number | undefined): string {
-    if (a == null || b == null) return '→'; // neutre
+    if (a == null || b == null) return '→';
 
     const d = b - a;
 
-    if (d === 0) return '→'; // égal
-    if (d < 0) return '↓'; // Run B est meilleur (moins de temps)
-    return '↑'; // Run B est pire (plus de temps)
+    if (d === 0) return '→';
+    if (d < 0) return '↓';
+    return '↑';
   }
 
   sortedMetricKeys(): string[] {
@@ -120,7 +122,7 @@ export class DiffRunsPageComponent implements OnInit {
       const b2 = this.runB?.parsedMetrics[k2]?.values?.['p(95)'];
       const d2 = (b2 ?? 0) - (a2 ?? 0);
 
-      return d2 - d1; // pire → meilleur
+      return d2 - d1;
     });
   }
 
@@ -171,5 +173,33 @@ export class DiffRunsPageComponent implements OnInit {
     a.click();
 
     window.URL.revokeObjectURL(url);
+  }
+
+  heatmapClass(value: number | undefined, metric: string): string {
+    if (value == null) return 'heatmap-none';
+
+    const thresholds: any = {
+      avg: [5, 20, 50],
+      min: [1, 5, 20],
+      max: [20, 100, 300],
+      'p(95)': [20, 100, 300],
+      'p(99)': [50, 200, 500],
+    };
+
+    const [low, mid, high] = thresholds[metric] ?? [10, 50, 200];
+
+    if (value <= low) return 'heatmap-good';
+    if (value <= mid) return 'heatmap-warn';
+    if (value <= high) return 'heatmap-bad';
+    return 'heatmap-verybad';
+  }
+
+  networkMetricKeys(): string[] {
+    const all = this.metricKeys(this.runA?.parsedMetrics);
+
+    return all.filter(
+      (k) =>
+        k.includes('data_') || k.includes('sending') || k.includes('receiving'),
+    );
   }
 }

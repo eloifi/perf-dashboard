@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { StatusBadgeComponent } from '../../  components/status-badge/status-badge.component';
+import { StatusBadgeComponent } from '../../components/status-badge/status-badge.component';
 import { PerfRun } from 'src/app/model/perf-run';
 
 @Component({

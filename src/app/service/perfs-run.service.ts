@@ -8,11 +8,23 @@ export class PerfRunService {
   private baseUrl = 'http://localhost:8080/api/perf/runs';
 
   constructor(private http: HttpClient) {}
-
+  /*
   getLatest(app: string, scenario: string): Observable<PerfRun> {
     return this.http.get<PerfRun>(`${this.baseUrl}/latest`, {
       params: { app, scenario },
     });
+  }
+    */
+  getLatest(app: string, scenario: string): Observable<PerfRun> {
+    return this.http.get<PerfRun>(
+      `${this.baseUrl}/latest?app=${app}&scenario=${scenario}`,
+    );
+  }
+
+  getPrevious(app: string, scenario: string): Observable<PerfRun> {
+    return this.http.get<PerfRun>(
+      `${this.baseUrl}/previous?app=${app}&scenario=${scenario}`,
+    );
   }
 
   getHistory(app: string, scenario: string): Observable<PerfRun[]> {
