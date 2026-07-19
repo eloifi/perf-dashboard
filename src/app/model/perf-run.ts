@@ -1,15 +1,21 @@
 export interface PerfRun {
-  id: number;
+  id: string;
   app: string;
   scenario: string;
-  date: string;
-
-  p95: number;
-  httpReqFailed: number;
-  globalScore: number;
   status: string;
-
-  rawSummaryJson: any;
-  parsedMetrics: any;
-  checksSuccessRate: number;
+  p95: number;
+  error: number;
+  score: number;
+  timestamp: string;
+  parsedMetrics?: {
+    [metric: string]: {
+      values: {
+        avg?: number;
+        min?: number;
+        max?: number;
+        'p(95)'?: number;
+        'p(99)'?: number;
+      };
+    };
+  };
 }

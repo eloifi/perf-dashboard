@@ -1,0 +1,38 @@
+<div
+    class="bg-gray-900 rounded-xl p-6 shadow-lg border border-gray-800 transition-all hover:scale-[1.02] hover:border-gray-700">
+    <h2 class="text-xl font-semibold mb-4">Comparison</h2>
+
+    <div class="space-y-4" *ngIf="comparison">
+
+        <div class="flex justify-between items-center">
+            <span class="text-gray-400">p95 Δ</span>
+            <span class="font-bold" [ngClass]="{
+          'text-green-400': comparison.deltaP95 < 0,
+          'text-red-400': comparison.deltaP95 > 0
+        }">
+                {{ comparison.deltaP95 }} ms
+            </span>
+        </div>
+
+        <div class="flex justify-between items-center">
+            <span class="text-gray-400">Error Rate Δ</span>
+            <span class="font-bold" [ngClass]="{
+          'text-green-400': comparison.deltaHttpReqFailed < 0,
+          'text-red-400': comparison.deltaHttpReqFailed > 0
+        }">
+                {{ comparison.deltaHttpReqFailed }}
+            </span>
+        </div>
+
+        <div class="flex justify-between items-center">
+            <span class="text-gray-400">Score Δ</span>
+            <span class="font-bold" [ngClass]="{
+          'text-green-400': comparison.deltaGlobalScore > 0,
+          'text-red-400': comparison.deltaGlobalScore < 0
+        }">
+                {{ comparison.deltaGlobalScore }}
+            </span>
+        </div>
+
+    </div>
+</div>

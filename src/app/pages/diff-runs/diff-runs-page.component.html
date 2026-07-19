@@ -69,15 +69,11 @@
 
   <h2>Graphiques comparatifs</h2>
 
-  <app-p95-compare-chart *ngIf="runA && runB" [runA]="runA" [runB]="runB"></app-p95-compare-chart>
-  <app-error-rate-compare-chart *ngIf="runA && runB" [runA]="runA" [runB]="runB"></app-error-rate-compare-chart>
   <app-score-compare-chart *ngIf="runA && runB" [runA]="runA" [runB]="runB"></app-score-compare-chart>
   <app-status-diff-visual *ngIf="runA && runB" [runA]="runA" [runB]="runB"></app-status-diff-visual>
   <app-score-diff-visual *ngIf="runA && runB" [runA]="runA" [runB]="runB"></app-score-diff-visual>
 
   <h2>Diff JSON complet</h2>
-
-  <app-json-diff-viewer *ngIf="runA && runB" [runA]="runA" [runB]="runB"></app-json-diff-viewer>
 
   <h2>Métriques techniques détaillées</h2>
 

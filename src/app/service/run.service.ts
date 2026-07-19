@@ -37,16 +37,6 @@ export class RunService {
   }
 
   getById(id: number): Observable<PerfRun> {
-    return this.http.get<PerfRun>(`${this.baseUrl}/runs/${id}`).pipe(
-      map((run) => {
-        try {
-          const parsed = JSON.parse(run.rawSummaryJson);
-          run.parsedMetrics = parsed.metrics; // <-- IMPORTANT
-        } catch (e) {
-          run.parsedMetrics = null;
-        }
-        return run;
-      }),
-    );
+    return this.http.get<PerfRun>(`${this.baseUrl}/runs/${id}`);
   }
 }

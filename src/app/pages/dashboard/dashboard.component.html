@@ -1,0 +1,20 @@
+<div class="grid gap-6 md:grid-cols-3">
+  <section class="md:col-span-1">
+    <h2 class="mb-2 text-lg font-semibold">Latest run</h2>
+    <app-run-card *ngIf="latest" [run]="latest"></app-run-card>
+  </section>
+
+  <section class="md:col-span-2">
+    <h2 class="mb-2 text-lg font-semibold">Comparison</h2>
+    <app-comparison-card *ngIf="comparison" [comparison]="comparison"></app-comparison-card>
+  </section>
+</div>
+
+<section class="mt-8">
+  <h2 class="mb-2 text-lg font-semibold">History</h2>
+  <div class="grid gap-4 md:grid-cols-3">
+    <app-history-chart [history]="history" chartType="p95"></app-history-chart>
+    <app-history-chart [history]="history" chartType="error"></app-history-chart>
+    <app-history-chart [history]="history" chartType="score"></app-history-chart>
+  </div>
+</section>

@@ -1,45 +1,38 @@
-import { Component, OnInit } from '@angular/core';
-import { ErrorRateChartComponent } from 'src/app/components/error-rate-chart/error-rate-chart.component';
-import { P95ChartComponent } from 'src/app/components/p95-chart/p95-chart.component';
-import { RunLatestComponent } from 'src/app/components/run-latest/run-latest.component';
-import { RunsListComponent } from 'src/app/components/runs-list/runs-list.component';
-import { PerfRun } from 'src/app/model/perf-run';
-import { PerfRunService } from 'src/app/service/perfs-run.service';
+import { CommonModule } from '@angular/common';
+import { Component, inject } from '@angular/core';
+import { PerfRun } from '../../model/perf-run';
+import { PerfRunComparison } from '../../model/perf-run-comparison.model';
+import { PerfRunService } from '../../service/perfs-run.service';
+import { RunCardComponent } from '../../shared/components/run-card/run-card.component';
+import { ComparisonCardComponent } from '../../shared/components/comparison-card/comparison-card.component';
+import { HistoryChartComponent } from '../../shared/components/history-chart/history-chart.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [
-    RunLatestComponent,
-    RunsListComponent,
-    P95ChartComponent,
-    ErrorRateChartComponent,
+    CommonModule,
+    RunCardComponent,
+    ComparisonCardComponent,
+    HistoryChartComponent,
   ],
-  template: `
-    <!--     <app-run-latest [run]="latest"></app-run-latest> -->
-    <app-run-latest></app-run-latest>
-
-    <app-p95-chart [runs]="history"></app-p95-chart>
-
-    <app-error-rate-chart [runs]="history"></app-error-rate-chart>
-
-    <app-runs-list [runs]="history"></app-runs-list>
-  `,
+  templateUrl: './dashboard.component.html',
 })
-export class DashboardComponent implements OnInit {
-  latest!: PerfRun;
+export class DashboardComponent {
+  private service = inject(PerfRunService);
+
+  latest: PerfRun | null = null;
+  comparison: PerfRunComparison | null = null;
   history: PerfRun[] = [];
 
-  runA?: PerfRun; // latest
-  runB?: PerfRun; // previous
-  constructor(private service: PerfRunService) {}
+  ngOnInit(): void {
+    const app = 'my-app';
+    const scenario = 'default';
 
-  ngOnInit() {
-    this.service.getLatest('way2home', 'search').subscribe((run) => {
-      this.runA = run;
-    });
-    this.service.getPrevious('way2home', 'search').subscribe((run) => {
-      this.runB = run;
-    });
+    this.service.getLatest(app, scenario).subscribe((r) => (this.latest = r));
+    this.service
+      .getComparison(app, scenario)
+      .subscribe((r) => (this.comparison = r));
+    this.service.getHistory(app, scenario).subscribe((r) => (this.history = r));
   }
 }
