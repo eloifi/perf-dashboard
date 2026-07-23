@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+// src/app/shared/components/comparison-card/comparison-card.component.ts
+import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PerfRunComparison } from '../../../model/perf-run-comparison.model';
 
@@ -9,5 +10,5 @@ import { PerfRunComparison } from '../../../model/perf-run-comparison.model';
   templateUrl: './comparison-card.component.html',
 })
 export class ComparisonCardComponent {
-  comparison!: PerfRunComparison;
+  @Input() comparison!: PerfRunComparison;
 }

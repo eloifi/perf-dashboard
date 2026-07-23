@@ -1,3 +1,4 @@
+// src/app/shared/components/history-chart/history-chart.component.ts
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { PerfRun } from '../../../model/perf-run';
@@ -14,20 +15,16 @@ export class HistoryChartComponent {
   @Input() history: PerfRun[] = [];
   @Input() chartType: ChartType = 'p95';
 
-  get data(): number[] {
+  get data() {
     return this.history.map((h) => {
       switch (this.chartType) {
         case 'p95':
           return h.p95;
         case 'error':
-          return h.error;
+          return h.errorRate;
         case 'score':
-          return h.score;
+          return h.globalScore;
       }
     });
-  }
-
-  get labels(): string[] {
-    return this.history.map((h) => h.timestamp);
   }
 }

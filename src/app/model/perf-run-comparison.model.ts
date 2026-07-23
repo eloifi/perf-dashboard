@@ -1,9 +1,8 @@
-import { PerfRun } from './perf-run';
-
 export interface PerfRunComparison {
-  runA: PerfRun;
-  runB: PerfRun;
-  deltaScore: number;
-  deltaError: number;
+  idA: string;
+  idB: string;
+
   deltaP95: number;
+  deltaHttpReqFailed: number;
+  deltaGlobalScore: number;
 }

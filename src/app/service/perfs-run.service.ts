@@ -3,10 +3,11 @@ import { HttpClient } from '@angular/common/http';
 import { PerfRun } from '../model/perf-run';
 import { PerfRunComparison } from '../model/perf-run-comparison.model';
 import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class PerfRunService {
-  private baseUrl = '/api/perf-runs';
+  private baseUrl = `${environment.perfs_URL}/perf-runs`;
 
   constructor(private http: HttpClient) {}
 
