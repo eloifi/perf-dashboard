@@ -40,4 +40,10 @@ export class PerfRunService {
   getById(id: string): Observable<PerfRun> {
     return this.http.get<PerfRun>(`${this.baseUrl}/${id}`);
   }
+
+  getRuns(app: string, scenario: string) {
+    return this.http.get<any[]>(
+      `${this.baseUrl}/list?app=${app}&scenario=${scenario}`,
+    );
+  }
 }

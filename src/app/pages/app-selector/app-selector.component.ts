@@ -63,8 +63,13 @@ export class AppSelectorComponent {
     this.service.getScenarios(this.selectedApp).subscribe((list) => {
       this.scenarios = list;
 
-      // Choisir le premier scénario automatiquement
-      this.selectedScenario = list[0];
+      // Fallback : si le scénario sélectionné n'existe pas → prendre le premier
+      if (!list.includes(this.selectedScenario)) {
+        console.warn(
+          `Fallback: scénario '${this.selectedScenario}' introuvable pour app '${this.selectedApp}'.`,
+        );
+        this.selectedScenario = list[0];
+      }
 
       this.emitSelection();
     });

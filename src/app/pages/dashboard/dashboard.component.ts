@@ -8,6 +8,7 @@ import { ComparisonCardComponent } from '../../shared/components/comparison-card
 import { HistoryChartComponent } from '../../shared/components/history-chart/history-chart.component';
 import { AppSelectorComponent } from '../app-selector/app-selector.component';
 import { DiffRunsPageComponent } from '../diff-runs/diff-runs-page.component'; // ← AJOUT
+import { RunSelectorComponent } from '../run-selector/run-selector.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -18,6 +19,7 @@ import { DiffRunsPageComponent } from '../diff-runs/diff-runs-page.component'; /
     ComparisonCardComponent,
     HistoryChartComponent,
     AppSelectorComponent,
+    RunSelectorComponent,
     DiffRunsPageComponent, // ← AJOUT
   ],
   templateUrl: './dashboard.component.html',
@@ -30,6 +32,8 @@ export class DashboardComponent {
   history: PerfRun[] = [];
   app = 'my-app';
   scenario = 'default';
+  runAId: number | null = null;
+  runBId: number | null = null;
 
   ngOnInit(): void {
     this.loadData();
@@ -51,5 +55,20 @@ export class DashboardComponent {
     this.app = sel.app;
     this.scenario = sel.scenario;
     this.loadData();
+  }
+
+  onAppScenario(sel: { app: string; scenario: string }) {
+    this.app = sel.app;
+    this.scenario = sel.scenario;
+  }
+
+  onRunSelection(sel: { runA: number | null; runB: number | null }) {
+    if (sel.runA === null || sel.runB === null) {
+      console.warn('Fallback: pas de runs disponibles pour ce scénario');
+      return;
+    }
+
+    this.runAId = sel.runA;
+    this.runBId = sel.runB;
   }
 }

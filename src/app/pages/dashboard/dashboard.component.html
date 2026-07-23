@@ -1,4 +1,7 @@
 <app-selector (selection)="onSelection($event)"></app-selector>
 
-<diff-runs-page [app]="app" [scenario]="scenario">
+<run-selector [app]="app" [scenario]="scenario" (selection)="onRunSelection($event)">
+</run-selector>
+
+<diff-runs-page [app]="app" [scenario]="scenario" [runAId]="runAId" [runBId]="runBId">
 </diff-runs-page>

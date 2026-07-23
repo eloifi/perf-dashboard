@@ -26,6 +26,9 @@ export class DiffRunsPageComponent implements OnChanges {
   @Input() app!: string;
   @Input() scenario!: string;
 
+  @Input() runAId: number | null = null;
+  @Input() runBId: number | null = null;
+
   runA: any;
   runB: any;
   history: any[] = [];
@@ -33,10 +36,9 @@ export class DiffRunsPageComponent implements OnChanges {
 
   constructor(private service: PerfRunService) {}
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes['app'] || changes['scenario']) {
-      this.loadData();
-    }
+  ngOnChanges() {
+    if (!this.runAId || !this.runBId) return;
+    this.loadData();
   }
 
   loadData() {
