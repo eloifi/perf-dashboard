@@ -29,6 +29,14 @@ export class PerfRunService {
     );
   }
 
+  getScenarios(app: string) {
+    return this.http.get<string[]>(`${this.baseUrl}/scenarios?app=${app}`);
+  }
+
+  getApps() {
+    return this.http.get<string[]>(`${this.baseUrl}/apps`);
+  }
+
   getById(id: string): Observable<PerfRun> {
     return this.http.get<PerfRun>(`${this.baseUrl}/${id}`);
   }
