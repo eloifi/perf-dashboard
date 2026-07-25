@@ -1,37 +1,48 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+// src/app/pages/dashboard/dashboard.component.ts
+import { Component, OnInit } from '@angular/core';
+import { NgIf } from '@angular/common';
+import { PerfRun } from 'src/app/model/perf-run';
+import { PerfRunService } from 'src/app/service/perfs-run.service';
 import { DiffRunsPageComponent } from '../diff-runs/diff-runs-page.component';
-import { AppSelectorComponent } from '../app-selector/app-selector.component';
-import { RunSelectorComponent } from '../run-selector/run-selector.component';
+import { RunSelectorComponent } from '../selector/run-selector/run-selector.component';
 
 @Component({
-  selector: 'dashboard',
+  selector: 'app-dashboard',
   standalone: true,
-  imports: [
-    CommonModule,
-    AppSelectorComponent,
-    RunSelectorComponent,
-    DiffRunsPageComponent,
-  ],
+  imports: [NgIf, RunSelectorComponent, DiffRunsPageComponent],
   templateUrl: './dashboard.component.html',
 })
-export class DashboardComponent {
-  dense: boolean = false;
+export class DashboardComponent implements OnInit {
+  app = 'way2home';
+  scenario = 'default';
 
-  app: string = '';
-  scenario: string = '';
-
+  runs: PerfRun[] = [];
   runAId: number | null = null;
   runBId: number | null = null;
+  runA: any = null;
+  runB: any = null;
 
-  onAppScenario(sel: { app: string; scenario: string }) {
-    this.app = sel.app;
-    this.scenario = sel.scenario;
+  constructor(private perfService: PerfRunService) {}
+
+  ngOnInit() {
+    this.loadRunsList();
   }
 
-  onRunSelection(sel: { runA: number | null; runB: number | null }) {
-    if (!sel.runA || !sel.runB) return;
-    this.runAId = sel.runA;
-    this.runBId = sel.runB;
+  loadRunsList() {
+    this.perfService.getRuns(this.app, this.scenario).subscribe((runs) => {
+      this.runs = runs;
+      if (runs.length > 0) {
+        this.runAId = runs[0].id;
+        this.runBId = runs.length > 1 ? runs[1].id : runs[0].id;
+      }
+    });
+  }
+
+  onSelectionChange(selection: {
+    runAId: number | null;
+    runBId: number | null;
+  }) {
+    this.runAId = selection.runAId;
+    this.runBId = selection.runBId;
   }
 }

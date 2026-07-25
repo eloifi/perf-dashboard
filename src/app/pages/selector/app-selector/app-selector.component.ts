@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { PerfRunService } from '../../service/perfs-run.service';
+import { PerfRunService } from 'src/app/service/perfs-run.service';
 
 @Component({
   selector: 'app-selector',

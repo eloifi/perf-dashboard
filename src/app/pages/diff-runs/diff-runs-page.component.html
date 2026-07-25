@@ -1,146 +1,126 @@
-<!-- Résumé Run A / Run B -->
-<div *ngIf="section === 'summary'" class="grid grid-cols-2 gap-4">
+<div *ngIf="runA && runB; else noRuns" class="space-y-6 text-sm">
 
-  <div class="p-3 border rounded bg-white shadow-sm text-sm">
-    <div class="flex justify-between mb-2">
-      <span class="font-semibold">Run A (latest)</span>
-      <span class="px-2 py-1 bg-green-600 text-white text-xs rounded">OK</span>
+  <!-- SUMMARY -->
+  <ng-container *ngIf="section === 'summary'">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+      <div class="border rounded-lg p-4">
+        <div class="font-semibold mb-2">Run A</div>
+        <div>ID: {{ runA.id }}</div>
+        <div>P95: {{ runA.p95 }} ms</div>
+        <div>Error: {{ runA.errorRate }}%</div>
+        <div>Score: {{ runA.globalScore }}</div>
+      </div>
+
+      <div class="border rounded-lg p-4">
+        <div class="font-semibold mb-2">Run B</div>
+        <div>ID: {{ runB.id }}</div>
+        <div>P95: {{ runB.p95 }} ms</div>
+        <div>Error: {{ runB.errorRate }}%</div>
+        <div>Score: {{ runB.globalScore }}</div>
+      </div>
+
     </div>
-    <div class="text-xs text-gray-500 mb-2">{{ runA?.date | date:'short' }}</div>
-    <div class="grid grid-cols-2 gap-1">
-      <div>P95: <strong>{{ runA?.p95 }} ms</strong></div>
-      <div>Error: <strong>{{ runA?.errorRate }}%</strong></div>
-      <div>Score: <strong>{{ runA?.globalScore }}</strong></div>
-    </div>
-  </div>
+  </ng-container>
 
-  <div class="p-3 border rounded bg-white shadow-sm text-sm">
-    <div class="flex justify-between mb-2">
-      <span class="font-semibold">Run B (previous)</span>
-      <span class="px-2 py-1 bg-blue-600 text-white text-xs rounded">OK</span>
-    </div>
-    <div class="text-xs text-gray-500 mb-2">{{ runB?.date | date:'short' }}</div>
-    <div class="grid grid-cols-2 gap-1">
-      <div>P95: <strong>{{ runB?.p95 }} ms</strong></div>
-      <div>Error: <strong>{{ runB?.errorRate }}%</strong></div>
-      <div>Score: <strong>{{ runB?.globalScore }}</strong></div>
-    </div>
-  </div>
-
-</div>
-
-<!-- Tableau des métriques -->
-<div *ngIf="section === 'metrics'" class="p-3 bg-white border rounded shadow-sm text-sm">
-  <h3 class="font-semibold mb-2">Résumé des métriques</h3>
-
-  <table class="w-full text-xs">
-    <thead>
-      <tr class="border-b">
-        <th>Métrique</th>
-        <th>Run A</th>
-        <th>Run B</th>
-        <th>Δ</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr class="border-b">
-        <td>P95</td>
-        <td>{{ runA?.p95 }} ms</td>
-        <td>{{ runB?.p95 }} ms</td>
-        <td [class.text-green-600]="runA?.p95 < runB?.p95" [class.text-red-600]="runA?.p95 > runB?.p95">
-          {{ runA?.p95 - runB?.p95 }} ms
-        </td>
-      </tr>
-      <tr class="border-b">
-        <td>Error</td>
-        <td>{{ runA?.errorRate }}%</td>
-        <td>{{ runB?.errorRate }}%</td>
-        <td [class.text-green-600]="runA?.errorRate < runB?.errorRate"
-          [class.text-red-600]="runA?.errorRate > runB?.errorRate">
-          {{ runA?.errorRate - runB?.errorRate }}%
-        </td>
-      </tr>
-      <tr>
-        <td>Score</td>
-        <td>{{ runA?.globalScore }}</td>
-        <td>{{ runB?.globalScore }}</td>
-        <td [class.text-green-600]="runA?.globalScore > runB?.globalScore"
-          [class.text-red-600]="runA?.globalScore < runB?.globalScore">
-          {{ runA?.globalScore - runB?.globalScore }}
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
-<!-- Status -->
-<div *ngIf="section === 'status'" class="p-3 bg-white border rounded shadow-sm text-sm">
-  <h3 class="font-semibold mb-2">Status</h3>
-  <div class="flex gap-4">
-    <span class="px-2 py-1 bg-green-600 text-white text-xs rounded">Run A: {{ runA?.status }}</span>
-    <span class="px-2 py-1 bg-blue-600 text-white text-xs rounded">Run B: {{ runB?.status }}</span>
-  </div>
-</div>
-
-<!-- Score global (bar chart simple) -->
-<div *ngIf="section === 'score'" class="p-3 bg-white border rounded shadow-sm text-sm">
-  <h3 class="font-semibold mb-2">Score global</h3>
-  <div class="flex items-end gap-4 h-24">
-    <div class="flex flex-col items-center flex-1">
-      <div class="w-6 bg-green-500" [style.height.%]="runA?.globalScore"></div>
-      <span class="text-xs mt-1">Run A</span>
-    </div>
-    <div class="flex flex-col items-center flex-1">
-      <div class="w-6 bg-blue-500" [style.height.%]="runB?.globalScore"></div>
-      <span class="text-xs mt-1">Run B</span>
-    </div>
-  </div>
-</div>
-
-<!-- Métriques avancées -->
-<div *ngIf="section === 'advanced'" class="p-3 bg-white border rounded shadow-sm text-xs">
-  <h3 class="font-semibold mb-2">Métriques avancées</h3>
-
-  <div class="overflow-x-auto">
-    <table class="w-full">
+  <!-- METRICS -->
+  <ng-container *ngIf="section === 'metrics'">
+    <table class="w-full text-xs border-collapse">
       <thead>
         <tr class="border-b">
-          <th>Métrique</th>
-          <th>Avg A</th>
-          <th>Avg B</th>
-          <th>Min A</th>
-          <th>Min B</th>
-          <th>Max A</th>
-          <th>Max B</th>
-          <th>P95 A</th>
-          <th>P95 B</th>
-          <th>P99 A</th>
-          <th>P99 B</th>
-          <th>Δ P95</th>
+          <th class="text-left py-1">Métrique</th>
+          <th class="text-right py-1">Run A</th>
+          <th class="text-right py-1">Run B</th>
+          <th class="text-right py-1">Δ</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let m of metrics">
-          <td>{{ m.name }}</td>
-          <td>{{ m.avgA }}</td>
-          <td>{{ m.avgB }}</td>
-          <td>{{ m.minA }}</td>
-          <td>{{ m.minB }}</td>
-          <td>{{ m.maxA }}</td>
-          <td>{{ m.maxB }}</td>
-          <td>{{ m.p95A }}</td>
-          <td>{{ m.p95B }}</td>
-          <td>{{ m.p99A }}</td>
-          <td>{{ m.p99B }}</td>
-          <td [class.text-green-600]="m.p95A < m.p95B" [class.text-red-600]="m.p95A > m.p95B">
-            {{ m.p95A - m.p95B }}
+
+        <tr class="border-b">
+          <td class="py-1">P95</td>
+          <td class="py-1 text-right">{{ runA.p95 }} ms</td>
+          <td class="py-1 text-right">{{ runB.p95 }} ms</td>
+          <td class="py-1 text-right" [class.text-green-600]="deltaP95 !== null && deltaP95 < 0"
+            [class.text-red-600]="deltaP95 !== null && deltaP95 > 0">
+            {{ deltaP95 }} ms
           </td>
         </tr>
+
+        <tr class="border-b">
+          <td class="py-1">Error</td>
+          <td class="py-1 text-right">{{ runA.errorRate }}%</td>
+          <td class="py-1 text-right">{{ runB.errorRate }}%</td>
+          <td class="py-1 text-right" [class.text-green-600]="deltaError !== null && deltaError < 0"
+            [class.text-red-600]="deltaError !== null && deltaError > 0">
+            {{ deltaError }}%
+          </td>
+        </tr>
+
+        <tr>
+          <td class="py-1">Score</td>
+          <td class="py-1 text-right">{{ runA.globalScore }}</td>
+          <td class="py-1 text-right">{{ runB.globalScore }}</td>
+          <td class="py-1 text-right" [class.text-green-600]="deltaScore !== null && deltaScore > 0"
+            [class.text-red-600]="deltaScore !== null && deltaScore < 0">
+            {{ deltaScore }}
+          </td>
+        </tr>
+
       </tbody>
     </table>
-  </div>
+  </ng-container>
+
+  <!-- STATUS -->
+  <ng-container *ngIf="section === 'status'">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+      <div class="border rounded-lg p-4">
+        <div class="font-semibold mb-2">Status Run A</div>
+        <div>ID: {{ runA.id }}</div>
+        <div>P95: {{ runA.p95 }} ms</div>
+        <div>Error: {{ runA.errorRate }}%</div>
+        <div>Score: {{ runA.globalScore }}</div>
+      </div>
+
+      <div class="border rounded-lg p-4">
+        <div class="font-semibold mb-2">Status Run B</div>
+        <div>ID: {{ runB.id }}</div>
+        <div>P95: {{ runB.p95 }} ms</div>
+        <div>Error: {{ runB.errorRate }}%</div>
+        <div>Score: {{ runB.globalScore }}</div>
+      </div>
+
+    </div>
+  </ng-container>
+
+  <!-- SCORE -->
+  <ng-container *ngIf="section === 'score'">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+      <div class="border rounded-lg p-4">
+        <div class="font-semibold mb-2">Score Run A</div>
+        <div class="text-2xl font-mono">{{ runA.globalScore }}</div>
+      </div>
+
+      <div class="border rounded-lg p-4">
+        <div class="font-semibold mb-2">Score Run B</div>
+        <div class="text-2xl font-mono">{{ runB.globalScore }}</div>
+      </div>
+
+    </div>
+  </ng-container>
+
+  <!-- ADVANCED -->
+  <ng-container *ngIf="section === 'advanced'">
+    <div class="text-xs text-gray-500">
+      Métriques avancées à compléter (p95/p99, min/max, etc.).
+    </div>
+  </ng-container>
+
 </div>
 
-<div *ngIf="!runA || !runB" class="text-xs text-gray-500">
-  Aucun run chargé (vérifier la sélection ou les IDs).
-</div>
+<ng-template #noRuns>
+  <div class="text-xs text-gray-500">
+    Aucun run chargé (vérifier la sélection).
+  </div>
+</ng-template>

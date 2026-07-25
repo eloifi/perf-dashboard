@@ -1,98 +1,55 @@
+// src/app/pages/diff-runs/diff-runs-page.component.ts
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { PerfRunService } from '../../service/perfs-run.service';
+import { NgIf, NgFor } from '@angular/common';
+import { PerfRun } from 'src/app/model/perf-run';
+import { PerfRunService } from 'src/app/service/perfs-run.service';
 
 @Component({
   selector: 'diff-runs-page',
   standalone: true,
-  imports: [CommonModule],
+  imports: [NgIf, NgFor],
   templateUrl: './diff-runs-page.component.html',
 })
 export class DiffRunsPageComponent implements OnChanges {
-  @Input() app!: string;
-  @Input() scenario!: string;
-
   @Input() runAId: number | null = null;
   @Input() runBId: number | null = null;
-
   @Input() section: 'summary' | 'metrics' | 'status' | 'score' | 'advanced' =
     'summary';
 
-  runA: any = null;
-  runB: any = null;
-
-  metrics: any[] = [];
+  runA: PerfRun | null = null;
+  runB: PerfRun | null = null;
 
   constructor(private perfService: PerfRunService) {}
 
   ngOnChanges(changes: SimpleChanges) {
-    if (!this.runAId || !this.runBId) return;
-
-    this.loadRunA();
-    this.loadRunB();
-  }
-
-  private loadRunA() {
-    if (!this.runAId) {
+    if (!this.runAId || !this.runBId) {
       this.runA = null;
-      return;
-    }
-
-    this.perfService.getById(String(this.runAId)).subscribe({
-      next: (data: any) => {
-        this.runA = data;
-        this.computeAdvancedMetrics();
-      },
-      error: () => {
-        console.warn(`Impossible de charger Run A (id=${this.runAId})`);
-        this.runA = null;
-      },
-    });
-  }
-
-  private loadRunB() {
-    if (!this.runBId) {
       this.runB = null;
       return;
     }
-
-    this.perfService.getById(String(this.runBId)).subscribe({
-      next: (data: any) => {
-        this.runB = data;
-        this.computeAdvancedMetrics();
-      },
-      error: () => {
-        console.warn(`Impossible de charger Run B (id=${this.runBId})`);
-        this.runB = null;
-      },
-    });
+    this.loadRuns();
   }
 
-  private computeAdvancedMetrics() {
-    if (!this.runA || !this.runB) return;
+  loadRuns() {
+    const runA$ = this.perfService.getById(String(this.runAId!));
+    const runB$ = this.perfService.getById(String(this.runBId!));
 
-    const metricsA = this.runA.parsedMetricsJson || {};
-    const metricsB = this.runB.parsedMetricsJson || {};
+    runA$.subscribe((r) => (this.runA = r));
+    runB$.subscribe((r) => (this.runB = r));
+  }
 
-    const keys = Object.keys(metricsA);
+  get deltaP95(): number | null {
+    if (!this.runA || !this.runB) return null;
+    return this.runA.p95 - this.runB.p95;
+  }
 
-    this.metrics = keys.map((key) => {
-      const a = metricsA[key];
-      const b = metricsB[key];
+  get deltaError(): number | null {
+    if (!this.runA || !this.runB) return null;
+    return this.runA.errorRate - this.runB.errorRate;
+  }
 
-      return {
-        name: key,
-        avgA: a?.avg ?? '-',
-        avgB: b?.avg ?? '-',
-        minA: a?.min ?? '-',
-        minB: b?.min ?? '-',
-        maxA: a?.max ?? '-',
-        maxB: b?.max ?? '-',
-        p95A: a?.p95 ?? '-',
-        p95B: b?.p95 ?? '-',
-        p99A: a?.p99 ?? '-',
-        p99B: b?.p99 ?? '-',
-      };
-    });
+  get deltaScore(): number | null {
+    if (!this.runA || !this.runB) return null;
+    return this.runA.globalScore - this.runB.globalScore;
   }
 }

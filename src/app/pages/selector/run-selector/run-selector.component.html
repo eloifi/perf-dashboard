@@ -1,0 +1,33 @@
+<div class="flex flex-wrap items-center gap-4 text-sm">
+
+  <!-- Run A -->
+  <div>
+    <label class="block text-xs mb-1">Run A</label>
+
+    <select #runASelect class="border rounded px-2 py-1 text-sm" (change)="onRunAChange(runASelect.value)">
+
+      <option value="">-- choisir Run A --</option>
+
+      <option *ngFor="let r of runs" [value]="r.id">
+        #{{ r.id }} — P95: {{ r.p95 }} ms — Err: {{ r.errorRate }}% — Score: {{ r.globalScore }}
+      </option>
+
+    </select>
+  </div>
+
+  <!-- Run B -->
+  <div>
+    <label class="block text-xs mb-1">Run B</label>
+
+    <select #runBSelect class="border rounded px-2 py-1 text-sm" (change)="onRunBChange(runBSelect.value)">
+
+      <option value="">-- choisir Run B --</option>
+
+      <option *ngFor="let r of runs" [value]="r.id">
+        #{{ r.id }} — P95: {{ r.p95 }} ms — Err: {{ r.errorRate }}% — Score: {{ r.globalScore }}
+      </option>
+
+    </select>
+  </div>
+
+</div>

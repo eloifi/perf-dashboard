@@ -1,47 +1,38 @@
-<div class="min-h-screen flex flex-col gap-4 p-4 bg-gray-50">
+<div class="p-4 space-y-4">
 
-    <!-- Barre de contrôle -->
-    <div class="flex flex-wrap items-center gap-4">
-        <app-selector (selection)="onAppScenario($event)"></app-selector>
+    <h1 class="text-xl font-semibold mb-4">Perf Dashboard</h1>
 
-        <run-selector [app]="app" [scenario]="scenario" (selection)="onRunSelection($event)">
-        </run-selector>
+    <!-- Run selector -->
+    <run-selector *ngIf="runs && runs.length > 0" [runs]="runs" [runAId]="runAId" [runBId]="runBId"
+        (selection)="onSelectionChange($event)">
+    </run-selector>
 
-        <button class="px-3 py-1 border rounded text-xs" (click)="dense = !dense">
-            Mode dense
-        </button>
-
-        <button class="px-3 py-1 border rounded text-xs">
-            Export CSV
-        </button>
+    <div *ngIf="!runs || runs.length === 0" class="text-sm text-gray-500">
+        Aucun run disponible pour {{ app }} / {{ scenario }}.
     </div>
 
-    <!-- Zone principale -->
-    <div [class.compact]="dense" class="grid grid-cols-3 gap-4 flex-1">
+    <!-- Sections -->
+    <section *ngIf="runAId && runBId" class="space-y-6 mt-6">
 
-        <!-- Colonne 1 : Run A + Run B -->
-        <div class="col-span-1 flex flex-col gap-4">
-            <diff-runs-page [app]="app" [scenario]="scenario" [runAId]="runAId" [runBId]="runBId" section="summary">
-            </diff-runs-page>
-        </div>
+        <diff-runs-page [runAId]="runAId" [runBId]="runBId" section="summary">
+        </diff-runs-page>
 
-        <!-- Colonne 2 : Résumé + Status + Score -->
-        <div class="col-span-1 flex flex-col gap-4">
-            <diff-runs-page [app]="app" [scenario]="scenario" [runAId]="runAId" [runBId]="runBId" section="metrics">
-            </diff-runs-page>
+        <diff-runs-page [runAId]="runAId" [runBId]="runBId" section="metrics">
+        </diff-runs-page>
 
-            <diff-runs-page [app]="app" [scenario]="scenario" [runAId]="runAId" [runBId]="runBId" section="status">
-            </diff-runs-page>
+        <diff-runs-page [runAId]="runAId" [runBId]="runBId" section="status">
+        </diff-runs-page>
 
-            <diff-runs-page [app]="app" [scenario]="scenario" [runAId]="runAId" [runBId]="runBId" section="score">
-            </diff-runs-page>
-        </div>
+        <diff-runs-page [runAId]="runAId" [runBId]="runBId" section="score">
+        </diff-runs-page>
 
-        <!-- Colonne 3 : métriques avancées -->
-        <div class="col-span-1 flex flex-col gap-4">
-            <diff-runs-page [app]="app" [scenario]="scenario" [runAId]="runAId" [runBId]="runBId" section="advanced">
-            </diff-runs-page>
-        </div>
+        <diff-runs-page [runAId]="runAId" [runBId]="runBId" section="advanced">
+        </diff-runs-page>
 
+    </section>
+
+    <div *ngIf="!(runAId && runBId)" class="text-sm text-gray-500">
+        Sélectionner Run A et Run B pour afficher les comparaisons.
     </div>
+
 </div>
