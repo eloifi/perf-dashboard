@@ -1,156 +1,146 @@
-<div class="diff-container">
+<!-- Résumé Run A / Run B -->
+<div *ngIf="section === 'summary'" class="grid grid-cols-2 gap-4">
 
-  <h1>Comparaison des runs</h1>
-
-  <div class="run-info">
-    <div>
-      <h3>Run A (latest)</h3>
-      <app-status-badge [status]="runA?.status ?? ''"></app-status-badge>
-      <p>Date : {{ runA?.timestamp | date:'short' }}</p>
-      <p>Score : {{ runA?.globalScore }}</p>
-      <p>P95 : {{ runA?.p95 }} ms</p>
-      <p>Error rate : {{ runA?.errorRate }}%</p>
+  <div class="p-3 border rounded bg-white shadow-sm text-sm">
+    <div class="flex justify-between mb-2">
+      <span class="font-semibold">Run A (latest)</span>
+      <span class="px-2 py-1 bg-green-600 text-white text-xs rounded">OK</span>
     </div>
-
-    <div>
-      <h3>Run B (previous)</h3>
-      <app-status-badge [status]="runB?.status ?? ''"></app-status-badge>
-      <p>Date : {{ runB?.timestamp | date:'short' }}</p>
-      <p>Score : {{ runB?.globalScore }}</p>
-      <p>P95 : {{ runB?.p95 }} ms</p>
-      <p>Error rate : {{ runB?.errorRate }}%</p>
+    <div class="text-xs text-gray-500 mb-2">{{ runA?.date | date:'short' }}</div>
+    <div class="grid grid-cols-2 gap-1">
+      <div>P95: <strong>{{ runA?.p95 }} ms</strong></div>
+      <div>Error: <strong>{{ runA?.errorRate }}%</strong></div>
+      <div>Score: <strong>{{ runA?.globalScore }}</strong></div>
     </div>
   </div>
 
-  <h2>Résumé des métriques principales</h2>
+  <div class="p-3 border rounded bg-white shadow-sm text-sm">
+    <div class="flex justify-between mb-2">
+      <span class="font-semibold">Run B (previous)</span>
+      <span class="px-2 py-1 bg-blue-600 text-white text-xs rounded">OK</span>
+    </div>
+    <div class="text-xs text-gray-500 mb-2">{{ runB?.date | date:'short' }}</div>
+    <div class="grid grid-cols-2 gap-1">
+      <div>P95: <strong>{{ runB?.p95 }} ms</strong></div>
+      <div>Error: <strong>{{ runB?.errorRate }}%</strong></div>
+      <div>Score: <strong>{{ runB?.globalScore }}</strong></div>
+    </div>
+  </div>
 
-  <table class="compare-table" *ngIf="runA && runB">
-    <tr>
-      <th>Métrique</th>
-      <th>Run A</th>
-      <th>Run B</th>
-      <th>Δ</th>
-    </tr>
+</div>
 
-    <tr>
-      <td>P95</td>
-      <td>{{ runA.p95 }} ms</td>
-      <td>{{ runB.p95 }} ms</td>
-      <td [ngClass]="deltaClass(runA.p95, runB.p95)">
-        {{ diff(runA.p95, runB.p95) }} ms {{ deltaArrow(runA.p95, runB.p95) }}
-      </td>
-    </tr>
+<!-- Tableau des métriques -->
+<div *ngIf="section === 'metrics'" class="p-3 bg-white border rounded shadow-sm text-sm">
+  <h3 class="font-semibold mb-2">Résumé des métriques</h3>
 
-    <tr>
-      <td>Error rate</td>
-      <td>{{ runA.errorRate }}%</td>
-      <td>{{ runB.errorRate }}%</td>
-      <td [ngClass]="deltaClass(runA.errorRate, runB.errorRate)">
-        {{ diff(runA.errorRate, runB.errorRate) }}% {{ deltaArrow(runA.errorRate, runB.errorRate) }}
-      </td>
-    </tr>
-
-    <tr>
-      <td>Score</td>
-      <td>{{ runA.globalScore }}</td>
-      <td>{{ runB.globalScore }}</td>
-      <td [ngClass]="deltaClass(runA.globalScore, runB.globalScore)">
-        {{ diff(runA.globalScore, runB.globalScore) }} {{ deltaArrow(runA.globalScore, runB.globalScore) }}
-      </td>
-    </tr>
-
-    <tr>
-      <td>Status</td>
-      <td><app-status-badge [status]="runA?.status ?? ''"></app-status-badge></td>
-      <td><app-status-badge [status]="runB?.status ?? ''"></app-status-badge></td>
-      <td></td>
-    </tr>
-  </table>
-
-  <h2>Graphiques comparatifs</h2>
-
-  <app-score-compare-chart *ngIf="runA && runB" [runA]="runA" [runB]="runB"></app-score-compare-chart>
-  <app-status-diff-visual *ngIf="runA && runB" [runA]="runA" [runB]="runB"></app-status-diff-visual>
-  <app-score-diff-visual *ngIf="runA && runB" [runA]="runA" [runB]="runB"></app-score-diff-visual>
-
-  <h2>Métriques techniques détaillées</h2>
-
-  <button (click)="showAdvanced = !showAdvanced">
-    {{ showAdvanced ? 'Masquer les métriques avancées' : 'Afficher les métriques avancées' }}
-  </button>
-
-  <div *ngIf="showAdvanced && runA && runB" class="advanced-metrics">
-
-    <table class="tech-table">
-      <tr>
+  <table class="w-full text-xs">
+    <thead>
+      <tr class="border-b">
         <th>Métrique</th>
-        <th>Avg A</th>
-        <th>Avg B</th>
-        <th>Min A</th>
-        <th>Min B</th>
-        <th>Max A</th>
-        <th>Max B</th>
-        <th>P95 A</th>
-        <th>P95 B</th>
-        <th>P99 A</th>
-        <th>P99 B</th>
-        <th>Δ P95</th>
+        <th>Run A</th>
+        <th>Run B</th>
+        <th>Δ</th>
       </tr>
-
-      <tr *ngFor="let key of sortedMetricKeys()">
-        <td>{{ key }}</td>
-
-        <td [ngClass]="heatmapClass((runA?.parsedMetrics?.[key]?.values?.avg ?? 0), 'avg')">
-          {{ runA?.parsedMetrics?.[key]?.values?.avg ?? '—' }}
-        </td>
-
-        <td [ngClass]="heatmapClass((runB?.parsedMetrics?.[key]?.values?.avg ?? 0), 'avg')">
-          {{ runB?.parsedMetrics?.[key]?.values?.avg ?? '—' }}
-        </td>
-
-        <td [ngClass]="heatmapClass((runA?.parsedMetrics?.[key]?.values?.min ?? 0), 'min')">
-          {{ runA?.parsedMetrics?.[key]?.values?.min ?? '—' }}
-        </td>
-
-        <td [ngClass]="heatmapClass((runB?.parsedMetrics?.[key]?.values?.min ?? 0), 'min')">
-          {{ runB?.parsedMetrics?.[key]?.values?.min ?? '—' }}
-        </td>
-
-        <td [ngClass]="heatmapClass((runA?.parsedMetrics?.[key]?.values?.max ?? 0), 'max')">
-          {{ runA?.parsedMetrics?.[key]?.values?.max ?? '—' }}
-        </td>
-
-        <td [ngClass]="heatmapClass((runB?.parsedMetrics?.[key]?.values?.max ?? 0), 'max')">
-          {{ runB?.parsedMetrics?.[key]?.values?.max ?? '—' }}
-        </td>
-
-        <td [ngClass]="heatmapClass((runA?.parsedMetrics?.[key]?.values?.['p(95)'] ?? 0), 'p(95)')">
-          {{ runA?.parsedMetrics?.[key]?.values?.['p(95)'] ?? '—' }}
-        </td>
-
-        <td [ngClass]="heatmapClass((runB?.parsedMetrics?.[key]?.values?.['p(95)'] ?? 0), 'p(95)')">
-          {{ runB?.parsedMetrics?.[key]?.values?.['p(95)'] ?? '—' }}
-        </td>
-
-        <td [ngClass]="heatmapClass((runA?.parsedMetrics?.[key]?.values?.['p(99)'] ?? 0), 'p(99)')">
-          {{ runA?.parsedMetrics?.[key]?.values?.['p(99)'] ?? '—' }}
-        </td>
-
-        <td [ngClass]="heatmapClass((runB?.parsedMetrics?.[key]?.values?.['p(99)'] ?? 0), 'p(99)')">
-          {{ runB?.parsedMetrics?.[key]?.values?.['p(99)'] ?? '—' }}
-        </td>
-
-        <td>
-          {{
-          (runB?.parsedMetrics?.[key]?.values?.['p(95)'] ?? 0)
-          -
-          (runA?.parsedMetrics?.[key]?.values?.['p(95)'] ?? 0)
-          }}
+    </thead>
+    <tbody>
+      <tr class="border-b">
+        <td>P95</td>
+        <td>{{ runA?.p95 }} ms</td>
+        <td>{{ runB?.p95 }} ms</td>
+        <td [class.text-green-600]="runA?.p95 < runB?.p95" [class.text-red-600]="runA?.p95 > runB?.p95">
+          {{ runA?.p95 - runB?.p95 }} ms
         </td>
       </tr>
-    </table>
+      <tr class="border-b">
+        <td>Error</td>
+        <td>{{ runA?.errorRate }}%</td>
+        <td>{{ runB?.errorRate }}%</td>
+        <td [class.text-green-600]="runA?.errorRate < runB?.errorRate"
+          [class.text-red-600]="runA?.errorRate > runB?.errorRate">
+          {{ runA?.errorRate - runB?.errorRate }}%
+        </td>
+      </tr>
+      <tr>
+        <td>Score</td>
+        <td>{{ runA?.globalScore }}</td>
+        <td>{{ runB?.globalScore }}</td>
+        <td [class.text-green-600]="runA?.globalScore > runB?.globalScore"
+          [class.text-red-600]="runA?.globalScore < runB?.globalScore">
+          {{ runA?.globalScore - runB?.globalScore }}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
-    <button (click)="exportTechCSV()">Exporter CSV</button>
+<!-- Status -->
+<div *ngIf="section === 'status'" class="p-3 bg-white border rounded shadow-sm text-sm">
+  <h3 class="font-semibold mb-2">Status</h3>
+  <div class="flex gap-4">
+    <span class="px-2 py-1 bg-green-600 text-white text-xs rounded">Run A: {{ runA?.status }}</span>
+    <span class="px-2 py-1 bg-blue-600 text-white text-xs rounded">Run B: {{ runB?.status }}</span>
   </div>
+</div>
 
+<!-- Score global (bar chart simple) -->
+<div *ngIf="section === 'score'" class="p-3 bg-white border rounded shadow-sm text-sm">
+  <h3 class="font-semibold mb-2">Score global</h3>
+  <div class="flex items-end gap-4 h-24">
+    <div class="flex flex-col items-center flex-1">
+      <div class="w-6 bg-green-500" [style.height.%]="runA?.globalScore"></div>
+      <span class="text-xs mt-1">Run A</span>
+    </div>
+    <div class="flex flex-col items-center flex-1">
+      <div class="w-6 bg-blue-500" [style.height.%]="runB?.globalScore"></div>
+      <span class="text-xs mt-1">Run B</span>
+    </div>
+  </div>
+</div>
+
+<!-- Métriques avancées -->
+<div *ngIf="section === 'advanced'" class="p-3 bg-white border rounded shadow-sm text-xs">
+  <h3 class="font-semibold mb-2">Métriques avancées</h3>
+
+  <div class="overflow-x-auto">
+    <table class="w-full">
+      <thead>
+        <tr class="border-b">
+          <th>Métrique</th>
+          <th>Avg A</th>
+          <th>Avg B</th>
+          <th>Min A</th>
+          <th>Min B</th>
+          <th>Max A</th>
+          <th>Max B</th>
+          <th>P95 A</th>
+          <th>P95 B</th>
+          <th>P99 A</th>
+          <th>P99 B</th>
+          <th>Δ P95</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let m of metrics">
+          <td>{{ m.name }}</td>
+          <td>{{ m.avgA }}</td>
+          <td>{{ m.avgB }}</td>
+          <td>{{ m.minA }}</td>
+          <td>{{ m.minB }}</td>
+          <td>{{ m.maxA }}</td>
+          <td>{{ m.maxB }}</td>
+          <td>{{ m.p95A }}</td>
+          <td>{{ m.p95B }}</td>
+          <td>{{ m.p99A }}</td>
+          <td>{{ m.p99B }}</td>
+          <td [class.text-green-600]="m.p95A < m.p95B" [class.text-red-600]="m.p95A > m.p95B">
+            {{ m.p95A - m.p95B }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div *ngIf="!runA || !runB" class="text-xs text-gray-500">
+  Aucun run chargé (vérifier la sélection ou les IDs).
 </div>
