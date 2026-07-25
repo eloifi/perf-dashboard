@@ -4,16 +4,16 @@
   <ng-container *ngIf="section === 'summary'">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-      <div class="border rounded-lg p-4">
-        <div class="font-semibold mb-2">Run A</div>
+      <div class="run-card">
+        <div class="run-card-title">Run A</div>
         <div>ID: {{ runA.id }}</div>
         <div>P95: {{ runA.p95 }} ms</div>
         <div>Error: {{ runA.errorRate }}%</div>
         <div>Score: {{ runA.globalScore }}</div>
       </div>
 
-      <div class="border rounded-lg p-4">
-        <div class="font-semibold mb-2">Run B</div>
+      <div class="run-card">
+        <div class="run-card-title">Run B</div>
         <div>ID: {{ runB.id }}</div>
         <div>P95: {{ runB.p95 }} ms</div>
         <div>Error: {{ runB.errorRate }}%</div>
@@ -23,97 +23,94 @@
     </div>
   </ng-container>
 
+
   <!-- METRICS -->
   <ng-container *ngIf="section === 'metrics'">
-    <table class="w-full text-xs border-collapse">
+    <table class="metrics-table">
       <thead>
         <tr class="border-b">
-          <th class="text-left py-1">Métrique</th>
-          <th class="text-right py-1">Run A</th>
-          <th class="text-right py-1">Run B</th>
-          <th class="text-right py-1">Δ</th>
+          <th>Métrique</th>
+          <th class="text-right">Run A</th>
+          <th class="text-right">Run B</th>
+          <th class="text-right">Δ</th>
         </tr>
       </thead>
       <tbody>
 
         <tr class="border-b">
-          <td class="py-1">P95</td>
-          <td class="py-1 text-right">{{ runA.p95 }} ms</td>
-          <td class="py-1 text-right">{{ runB.p95 }} ms</td>
-          <td class="py-1 text-right" [class.text-green-600]="deltaP95 !== null && deltaP95 < 0"
-            [class.text-red-600]="deltaP95 !== null && deltaP95 > 0">
+          <td>P95</td>
+          <td class="text-right">{{ runA.p95 }} ms</td>
+          <td class="text-right">{{ runB.p95 }} ms</td>
+          <td class="text-right" [class.heat-good]="(deltaP95 ?? 0) < 0" [class.heat-bad]="(deltaP95 ?? 0) > 0">
             {{ deltaP95 }} ms
           </td>
         </tr>
 
         <tr class="border-b">
-          <td class="py-1">Error</td>
-          <td class="py-1 text-right">{{ runA.errorRate }}%</td>
-          <td class="py-1 text-right">{{ runB.errorRate }}%</td>
-          <td class="py-1 text-right" [class.text-green-600]="deltaError !== null && deltaError < 0"
-            [class.text-red-600]="deltaError !== null && deltaError > 0">
+          <td>Error</td>
+          <td class="text-right">{{ runA.errorRate }}%</td>
+          <td class="text-right">{{ runB.errorRate }}%</td>
+          <td class="text-right" [class.heat-good]="(deltaError ?? 0) < 0" [class.heat-bad]="(deltaError ?? 0) > 0">
             {{ deltaError }}%
           </td>
         </tr>
 
         <tr>
-          <td class="py-1">Score</td>
-          <td class="py-1 text-right">{{ runA.globalScore }}</td>
-          <td class="py-1 text-right">{{ runB.globalScore }}</td>
-          <td class="py-1 text-right" [class.text-green-600]="deltaScore !== null && deltaScore > 0"
-            [class.text-red-600]="deltaScore !== null && deltaScore < 0">
+          <td>Score</td>
+          <td class="text-right">{{ runA.globalScore }}</td>
+          <td class="text-right">{{ runB.globalScore }}</td>
+          <td class="text-right" [class.heat-good]="(deltaScore ?? 0) > 0" [class.heat-bad]="(deltaScore ?? 0) < 0">
             {{ deltaScore }}
           </td>
         </tr>
 
       </tbody>
     </table>
-  </ng-container>
 
-  <!-- STATUS -->
-  <ng-container *ngIf="section === 'status'">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-      <div class="border rounded-lg p-4">
-        <div class="font-semibold mb-2">Status Run A</div>
-        <div>ID: {{ runA.id }}</div>
-        <div>P95: {{ runA.p95 }} ms</div>
-        <div>Error: {{ runA.errorRate }}%</div>
-        <div>Score: {{ runA.globalScore }}</div>
-      </div>
-
-      <div class="border rounded-lg p-4">
-        <div class="font-semibold mb-2">Status Run B</div>
-        <div>ID: {{ runB.id }}</div>
-        <div>P95: {{ runB.p95 }} ms</div>
-        <div>Error: {{ runB.errorRate }}%</div>
-        <div>Score: {{ runB.globalScore }}</div>
-      </div>
-
+    <div class="text-xs text-gray-500 mt-2">
+      Baseline Δ p95 : {{ deltaP95Baseline }} ms
     </div>
   </ng-container>
+
 
   <!-- SCORE -->
   <ng-container *ngIf="section === 'score'">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-      <div class="border rounded-lg p-4">
-        <div class="font-semibold mb-2">Score Run A</div>
-        <div class="text-2xl font-mono">{{ runA.globalScore }}</div>
+      <div class="run-card">
+        <div class="run-card-title">Score Run A</div>
+        <div class="text-2xl font-mono" [class]="scoreColorA">
+          {{ scoreBadgeA }} ({{ runA.globalScore }})
+        </div>
+
+        <div class="sparkline mt-2">
+          <div class="sparkline-bar bg-blue-500" [style.width.%]="p95PercentA"></div>
+        </div>
+        <div class="text-xs text-gray-500">p95: {{ runA.p95 }} ms</div>
+
+        <div class="sparkline mt-2">
+          <div class="sparkline-bar bg-purple-500" [style.width.%]="p99PercentA"></div>
+        </div>
+        <div class="text-xs text-gray-500">p99: {{ runA.p99 }} ms</div>
       </div>
 
-      <div class="border rounded-lg p-4">
-        <div class="font-semibold mb-2">Score Run B</div>
-        <div class="text-2xl font-mono">{{ runB.globalScore }}</div>
+      <div class="run-card">
+        <div class="run-card-title">Score Run B</div>
+        <div class="text-2xl font-mono" [class]="scoreColorB">
+          {{ scoreBadgeB }} ({{ runB.globalScore }})
+        </div>
+
+        <div class="sparkline mt-2">
+          <div class="sparkline-bar bg-blue-500" [style.width.%]="p95PercentB"></div>
+        </div>
+        <div class="text-xs text-gray-500">p95: {{ runB.p95 }} ms</div>
+
+        <div class="sparkline mt-2">
+          <div class="sparkline-bar bg-purple-500" [style.width.%]="p99PercentB"></div>
+        </div>
+        <div class="text-xs text-gray-500">p99: {{ runB.p99 }} ms</div>
       </div>
 
-    </div>
-  </ng-container>
-
-  <!-- ADVANCED -->
-  <ng-container *ngIf="section === 'advanced'">
-    <div class="text-xs text-gray-500">
-      Métriques avancées à compléter (p95/p99, min/max, etc.).
     </div>
   </ng-container>
 
@@ -124,3 +121,25 @@
     Aucun run chargé (vérifier la sélection).
   </div>
 </ng-template>
+
+<ng-container *ngIf="section === 'trend'">
+  <div class="run-card">
+    <div class="run-card-title">Trend p95</div>
+    <div class="trend-container">
+      <div *ngFor="let v of trendP95" class="trend-line" [style.width.%]="v / 20"></div>
+    </div>
+
+    <div class="run-card-title mt-4">Trend p99</div>
+    <div class="trend-container">
+      <div *ngFor="let v of trendP99" class="trend-line bg-purple-500" [style.width.%]="v / 20"></div>
+    </div>
+  </div>
+</ng-container>
+
+<div class="run-card mt-4" *ngIf="multiBaselineDelta.length > 0">
+  <div class="run-card-title">Multi-baseline Δ p95</div>
+
+  <div *ngFor="let b of multiBaselineDelta" class="text-xs">
+    Baseline {{ b.id }} : {{ b.delta }} ms
+  </div>
+</div>

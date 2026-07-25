@@ -1,38 +1,32 @@
-<div class="p-4 space-y-4">
+<div class="dashboard" [class.compact]="dense" [class.dark]="dark">
+
+    <div class="flex gap-4 mb-4">
+        <button class="px-3 py-1 border rounded text-sm" (click)="dense = !dense">
+            Mode compact : {{ dense ? 'ON' : 'OFF' }}
+        </button>
+
+        <button class="px-3 py-1 border rounded text-sm" (click)="dark = !dark">
+            Mode dark : {{ dark ? 'ON' : 'OFF' }}
+        </button>
+    </div>
 
     <h1 class="text-xl font-semibold mb-4">Perf Dashboard</h1>
 
-    <!-- Run selector -->
     <run-selector *ngIf="runs && runs.length > 0" [runs]="runs" [runAId]="runAId" [runBId]="runBId"
         (selection)="onSelectionChange($event)">
     </run-selector>
 
-    <div *ngIf="!runs || runs.length === 0" class="text-sm text-gray-500">
-        Aucun run disponible pour {{ app }} / {{ scenario }}.
-    </div>
-
-    <!-- Sections -->
     <section *ngIf="runAId && runBId" class="space-y-6 mt-6">
 
-        <diff-runs-page [runAId]="runAId" [runBId]="runBId" section="summary">
-        </diff-runs-page>
-
-        <diff-runs-page [runAId]="runAId" [runBId]="runBId" section="metrics">
-        </diff-runs-page>
-
-        <diff-runs-page [runAId]="runAId" [runBId]="runBId" section="status">
-        </diff-runs-page>
-
-        <diff-runs-page [runAId]="runAId" [runBId]="runBId" section="score">
-        </diff-runs-page>
-
-        <diff-runs-page [runAId]="runAId" [runBId]="runBId" section="advanced">
-        </diff-runs-page>
+        <diff-runs-page [runAId]="runAId" [runBId]="runBId" section="summary"></diff-runs-page>
+        <diff-runs-page [runAId]="runAId" [runBId]="runBId" section="metrics"></diff-runs-page>
+        <diff-runs-page [runAId]="runAId" [runBId]="runBId" section="status"></diff-runs-page>
+        <diff-runs-page [runAId]="runAId" [runBId]="runBId" section="score"></diff-runs-page>
+        <diff-runs-page [runAId]="runAId" [runBId]="runBId" section="advanced"></diff-runs-page>
 
     </section>
 
-    <div *ngIf="!(runAId && runBId)" class="text-sm text-gray-500">
-        Sélectionner Run A et Run B pour afficher les comparaisons.
-    </div>
-
 </div>
+
+<diff-runs-page [runAId]="runAId" [runBId]="runBId" [baseline]="baselineRun" section="metrics">
+</diff-runs-page>

@@ -19,13 +19,30 @@ export class DashboardComponent implements OnInit {
   runs: PerfRun[] = [];
   runAId: number | null = null;
   runBId: number | null = null;
-  runA: any = null;
-  runB: any = null;
+
+  dense = false;
+  dark = false;
+
+  baselineId = 1;
+  baselineRun: PerfRun | null = null;
+
+  trend: PerfRun[] = []; // historique
+  baselineIds = [1, 5, 10];
+  baselines: PerfRun[] = [];
 
   constructor(private perfService: PerfRunService) {}
 
   ngOnInit() {
     this.loadRunsList();
+    this.loadBaseline();
+    this.loadMultiBaseline();
+    this.loadTrend();
+    this.autoDark();
+  }
+
+  autoDark() {
+    const hour = new Date().getHours();
+    this.dark = hour >= 19 || hour < 7;
   }
 
   loadRunsList() {
@@ -38,11 +55,26 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  onSelectionChange(selection: {
-    runAId: number | null;
-    runBId: number | null;
-  }) {
-    this.runAId = selection.runAId;
-    this.runBId = selection.runBId;
+  loadBaseline() {
+    this.perfService
+      .getById(String(this.baselineId))
+      .subscribe((r) => (this.baselineRun = r));
+  }
+  loadMultiBaseline() {
+    this.baselineIds.forEach((id) => {
+      this.perfService
+        .getById(String(id))
+        .subscribe((r) => this.baselines.push(r));
+    });
+  }
+  loadTrend() {
+    this.perfService.getRuns(this.app, this.scenario).subscribe((runs) => {
+      this.trend = runs.slice(0, 10); // historique des 10 derniers runs
+    });
+  }
+
+  onSelectionChange(sel: { runAId: number | null; runBId: number | null }) {
+    this.runAId = sel.runAId;
+    this.runBId = sel.runBId;
   }
 }

@@ -4,6 +4,7 @@ export interface PerfRun {
   scenario: string;
   status: string;
   p95: number;
+  p99: number;
   errorRate: number;
   globalScore: number;
   error: number;
