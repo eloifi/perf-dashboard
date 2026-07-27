@@ -1,16 +1,13 @@
-// src/app/pages/dashboard/dashboard.component.ts
 import { Component, OnInit } from '@angular/core';
-import { NgIf } from '@angular/common';
 import { PerfRun } from 'src/app/model/perf-run';
 import { PerfRunService } from 'src/app/service/perfs-run.service';
 import { DiffRunsPageComponent } from '../diff-runs/diff-runs-page.component';
-import { RunSelectorComponent } from '../selector/run-selector/run-selector.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [NgIf, RunSelectorComponent, DiffRunsPageComponent],
   templateUrl: './dashboard.component.html',
+  imports: [DiffRunsPageComponent],
 })
 export class DashboardComponent implements OnInit {
   app = 'way2home';
@@ -23,12 +20,14 @@ export class DashboardComponent implements OnInit {
   dense = false;
   dark = false;
 
+  section: 'summary' | 'metrics' | 'score' | 'trend' = 'summary';
+
   baselineId = 1;
   baselineRun: PerfRun | null = null;
-
-  trend: PerfRun[] = []; // historique
   baselineIds = [1, 5, 10];
   baselines: PerfRun[] = [];
+
+  trend: PerfRun[] = [];
 
   constructor(private perfService: PerfRunService) {}
 
@@ -60,6 +59,7 @@ export class DashboardComponent implements OnInit {
       .getById(String(this.baselineId))
       .subscribe((r) => (this.baselineRun = r));
   }
+
   loadMultiBaseline() {
     this.baselineIds.forEach((id) => {
       this.perfService
@@ -67,9 +67,10 @@ export class DashboardComponent implements OnInit {
         .subscribe((r) => this.baselines.push(r));
     });
   }
+
   loadTrend() {
     this.perfService.getRuns(this.app, this.scenario).subscribe((runs) => {
-      this.trend = runs.slice(0, 10); // historique des 10 derniers runs
+      this.trend = runs.slice(0, 10);
     });
   }
 

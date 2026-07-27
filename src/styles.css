@@ -1,75 +1,31 @@
-/* stylelint-disable at-rule-no-unknown */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-/* stylelint-enable at-rule-no-unknown */
 
-/* Your Tailwind @apply classes below */
-
-.dashboard {
-  @apply min-h-screen p-4 space-y-6 bg-gray-50 text-gray-800;
+.blink {
+  animation: blink 0.8s infinite;
 }
 
-.run-card {
-  @apply border rounded-lg p-4 bg-white shadow-sm;
+@keyframes blink {
+  0%   { opacity: 1; }
+  50%  { opacity: 0.1; }
+  100% { opacity: 1; }
 }
 
-.run-card-title {
-  @apply font-semibold mb-2;
+.tooltip-parent {
+  position: relative;
+  overflow: visible !important;
 }
 
-.metrics-table {
-  @apply w-full text-xs border-collapse;
+.tooltip-box {
+  z-index: 50;
 }
 
-.metrics-table th {
-  @apply text-left py-1 text-gray-600;
+.tooltip-parent {
+  position: relative;
+  overflow: visible !important;
 }
 
-.metrics-table td {
-  @apply py-1 text-right;
-}
-
-.heat-good {
-  @apply bg-green-100;
-}
-
-.heat-bad {
-  @apply bg-red-100;
-}
-
-.sparkline {
-  @apply h-4 w-full bg-gray-200 rounded overflow-hidden;
-}
-
-.sparkline-bar {
-  @apply h-full bg-blue-500;
-}
-
-.trend-line {
-  @apply h-2 bg-blue-500 rounded;
-}
-
-.trend-container {
-  @apply flex gap-1 items-center;
-}
-
-.compact .run-card {
-  @apply p-2;
-}
-
-.dark {
-  @apply bg-gray-900 text-gray-200;
-}
-
-.dark .run-card {
-  @apply bg-gray-800 text-gray-200 border-gray-700;
-}
-
-.dark .sparkline {
-  @apply bg-gray-700;
-}
-
-.dark .sparkline-bar {
-  @apply bg-blue-300;
+.tooltip-box {
+  z-index: 9999;
 }

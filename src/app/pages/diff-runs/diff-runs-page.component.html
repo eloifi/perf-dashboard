@@ -121,25 +121,3 @@
     Aucun run chargé (vérifier la sélection).
   </div>
 </ng-template>
-
-<ng-container *ngIf="section === 'trend'">
-  <div class="run-card">
-    <div class="run-card-title">Trend p95</div>
-    <div class="trend-container">
-      <div *ngFor="let v of trendP95" class="trend-line" [style.width.%]="v / 20"></div>
-    </div>
-
-    <div class="run-card-title mt-4">Trend p99</div>
-    <div class="trend-container">
-      <div *ngFor="let v of trendP99" class="trend-line bg-purple-500" [style.width.%]="v / 20"></div>
-    </div>
-  </div>
-</ng-container>
-
-<div class="run-card mt-4" *ngIf="multiBaselineDelta.length > 0">
-  <div class="run-card-title">Multi-baseline Δ p95</div>
-
-  <div *ngFor="let b of multiBaselineDelta" class="text-xs">
-    Baseline {{ b.id }} : {{ b.delta }} ms
-  </div>
-</div>

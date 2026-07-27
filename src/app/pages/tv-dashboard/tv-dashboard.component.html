@@ -1,0 +1,142 @@
+<div class="w-screen h-screen bg-black text-white p-2 grid grid-rows-[auto_auto_1fr_auto] gap-2 overflow-hidden">
+
+    <!-- HEADER -->
+    <div class="text-sm font-semibold text-center opacity-80 leading-tight">
+        {{ app | uppercase }} — {{ scenario | uppercase }}
+    </div>
+
+    <!-- TOP METRICS -->
+    <div class="grid grid-cols-4 gap-2 text-center">
+
+        <div [class]="getHealthClass() + ' rounded-md p-2'">
+            <div class="text-xs opacity-70">HEALTH</div>
+            <div class="text-xl font-bold">
+                <span *ngIf="healthColor === 'green'">OK</span>
+                <span *ngIf="healthColor === 'yellow'">ATTENTION</span>
+                <span *ngIf="healthColor === 'red'">ALERTE</span>
+                <span *ngIf="healthColor === 'critical'">CRITIQUE</span>
+            </div>
+        </div>
+
+        <div class="bg-gray-800 rounded-md p-2">
+            <div class="text-xs opacity-70">p95</div>
+            <div class="text-2xl font-mono">{{ globalP95 }} ms</div>
+        </div>
+
+        <div class="bg-gray-800 rounded-md p-2">
+            <div class="text-xs opacity-70">Error</div>
+            <div class="text-2xl font-mono">{{ globalError }}%</div>
+        </div>
+
+        <div class="bg-gray-800 rounded-md p-2">
+            <div class="text-xs opacity-70">Score</div>
+            <div class="text-2xl font-mono">{{ globalScore }}</div>
+        </div>
+    </div>
+
+    <!-- MAIN BODY -->
+    <div class="grid grid-cols-2 gap-2 overflow-hidden">
+
+        <!-- RUN A / RUN B -->
+        <div class="grid grid-rows-[120px_120px] gap-2 overflow-hidden">
+
+            <div [class]="getRunColor(latestRun) + ' rounded-md p-2 text-center overflow-hidden'">
+                <div class="text-xs opacity-70">RUN A</div>
+                <div class="text-2xl font-mono">{{ latestRun?.p95 }} ms</div>
+                <div class="text-xs">Err: {{ latestRun?.errorRate }}%</div>
+                <div class="text-xs">Score: {{ latestRun?.globalScore }}</div>
+            </div>
+
+            <div [class]="getRunColor(previousRun) + ' rounded-md p-2 text-center overflow-hidden'">
+                <div class="text-xs opacity-70">RUN B</div>
+                <div class="text-2xl font-mono">{{ previousRun?.p95 }} ms</div>
+                <div class="text-xs">Err: {{ previousRun?.errorRate }}%</div>
+                <div class="text-xs">Score: {{ previousRun?.globalScore }}</div>
+            </div>
+        </div>
+
+        <!-- INDICATORS + BASELINES -->
+        <div class="grid grid-rows-[120px_120px] gap-2 overflow-hidden">
+
+            <div class="grid grid-cols-4 gap-2 text-center">
+
+                <div class="bg-gray-800 rounded-md p-2">
+                    <div class="text-xs opacity-70">p95</div>
+                    <div class="text-xl font-mono">{{ globalP95 }}</div>
+                </div>
+
+                <div class="bg-gray-800 rounded-md p-2">
+                    <div class="text-xs opacity-70">p99</div>
+                    <div class="text-xl font-mono">{{ latestRun?.p99 }}</div>
+                </div>
+
+                <div class="bg-gray-800 rounded-md p-2">
+                    <div class="text-xs opacity-70">Error</div>
+                    <div class="text-xl font-mono">{{ globalError }}%</div>
+                </div>
+
+                <div class="bg-gray-800 rounded-md p-2">
+                    <div class="text-xs opacity-70">TPS</div>
+                    <div class="text-xl font-mono">{{ globalThroughput }}</div>
+                </div>
+            </div>
+
+            <div class="bg-gray-800 rounded-md p-2 text-xs">
+                <div class="font-semibold mb-1">Baselines Δ p95</div>
+
+                <div *ngFor="let b of baselineDeltas" class="flex justify-between">
+                    <span>Base {{ b.id }}</span>
+                    <span [class.text-green-400]="b.deltaP95 < 0" [class.text-red-400]="b.deltaP95 > 0"
+                        class="text-lg font-mono">
+                        {{ b.deltaP95 }} ms
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHARTS -->
+    <div class="grid grid-cols-3 gap-2 overflow-hidden">
+
+        <div class="bg-gray-900 rounded-md border border-gray-700/50 h-[180px] flex flex-col">
+            <div class="text-xs font-semibold text-gray-300 px-2 py-1">Évolution journalière</div>
+            <div class="flex-1">
+                <line-chart-daily [app]="app" [scenario]="scenario"></line-chart-daily>
+            </div>
+        </div>
+
+        <div class="bg-gray-900 rounded-md border border-gray-700/50 h-[180px] flex flex-col">
+            <div class="text-xs font-semibold text-gray-300 px-2 py-1">Évolution mensuelle</div>
+            <div class="flex-1">
+                <line-chart-monthly [app]="app" [scenario]="scenario"></line-chart-monthly>
+            </div>
+        </div>
+
+        <div class="bg-gray-900 rounded-md border border-gray-700/50 h-[180px] flex flex-col">
+            <div class="text-xs font-semibold text-gray-300 px-2 py-1">Évolution annuelle</div>
+            <div class="flex-1">
+                <line-chart-yearly [app]="app" [scenario]="scenario"></line-chart-yearly>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <div class="flex justify-between text-xs text-gray-500 opacity-60">
+
+        <div>
+            <label>App:</label>
+            <select [(ngModel)]="app" (change)="refreshAll()" class="bg-gray-800 text-gray-300 p-1 rounded">
+                <option *ngFor="let a of apps" [value]="a">{{ a }}</option>
+            </select>
+
+            <label class="ml-2">Scenario:</label>
+            <select [(ngModel)]="scenario" (change)="refreshAll()" class="bg-gray-800 text-gray-300 p-1 rounded">
+                <option *ngFor="let s of scenarios" [value]="s">{{ s }}</option>
+            </select>
+        </div>
+
+        <span>Auto-refresh: 5s • TV mode</span>
+    </div>
+
+</div>

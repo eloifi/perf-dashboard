@@ -10,6 +10,7 @@ export interface PerfRun {
   error: number;
   score: number;
   timestamp: string;
+  throughput?: number;
   parsedMetrics?: {
     [metric: string]: {
       values: {

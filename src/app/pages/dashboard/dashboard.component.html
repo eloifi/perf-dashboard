@@ -1,32 +1,23 @@
-<div class="dashboard" [class.compact]="dense" [class.dark]="dark">
+<div [class.dashboard]="true" [class.dark]="dark" [class.compact]="dense">
 
-    <div class="flex gap-4 mb-4">
-        <button class="px-3 py-1 border rounded text-sm" (click)="dense = !dense">
+    <div class="flex items-center gap-4 mb-4">
+        <button class="px-3 py-1 border rounded" (click)="dense = !dense">
             Mode compact : {{ dense ? 'ON' : 'OFF' }}
         </button>
 
-        <button class="px-3 py-1 border rounded text-sm" (click)="dark = !dark">
+        <button class="px-3 py-1 border rounded" (click)="dark = !dark">
             Mode dark : {{ dark ? 'ON' : 'OFF' }}
         </button>
+
+        <button class="px-3 py-1 border rounded" (click)="section = 'summary'">Summary</button>
+        <button class="px-3 py-1 border rounded" (click)="section = 'metrics'">Metrics</button>
+        <button class="px-3 py-1 border rounded" (click)="section = 'score'">Score</button>
+        <button class="px-3 py-1 border rounded" (click)="section = 'trend'">Trend</button>
     </div>
 
-    <h1 class="text-xl font-semibold mb-4">Perf Dashboard</h1>
+    <!-- sélecteurs Run A / Run B (tu gardes les tiens) -->
 
-    <run-selector *ngIf="runs && runs.length > 0" [runs]="runs" [runAId]="runAId" [runBId]="runBId"
-        (selection)="onSelectionChange($event)">
-    </run-selector>
-
-    <section *ngIf="runAId && runBId" class="space-y-6 mt-6">
-
-        <diff-runs-page [runAId]="runAId" [runBId]="runBId" section="summary"></diff-runs-page>
-        <diff-runs-page [runAId]="runAId" [runBId]="runBId" section="metrics"></diff-runs-page>
-        <diff-runs-page [runAId]="runAId" [runBId]="runBId" section="status"></diff-runs-page>
-        <diff-runs-page [runAId]="runAId" [runBId]="runBId" section="score"></diff-runs-page>
-        <diff-runs-page [runAId]="runAId" [runBId]="runBId" section="advanced"></diff-runs-page>
-
-    </section>
-
+    <diff-runs-page [runAId]="runAId" [runBId]="runBId" [baseline]="baselineRun" [baselines]="baselines" [trend]="trend"
+        [section]="section">
+    </diff-runs-page>
 </div>
-
-<diff-runs-page [runAId]="runAId" [runBId]="runBId" [baseline]="baselineRun" section="metrics">
-</diff-runs-page>
